@@ -14,6 +14,7 @@ public class iniReader
 	
 	public void getFile(String file){
 		File iniFile = new File("/home/lvuser/" + file);
+		iniFile.setReadOnly();
 		try 
 		{
 			reader = new BufferedReader(new FileReader (iniFile));
