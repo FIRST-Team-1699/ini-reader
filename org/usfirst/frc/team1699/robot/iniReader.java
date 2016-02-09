@@ -19,7 +19,6 @@ public class iniReader
 		char indexCh;
 		String section1, section2;
 		File iniFile = new File("/home/lvuser/" + file);
-		iniFile.setReadOnly();
 		try 
 		{
 			reader = new BufferedReader(new FileReader (iniFile));
@@ -36,8 +35,8 @@ public class iniReader
 					{
 						// Checks for a space between the definition and the colon
 						indexCh = line.charAt(count1 - 1);
-						if (indexCh == ' ') {section1 = line.substring(0, count1 - 2);}
-						else {section1 = line.substring(0, count1 - 1);}
+						if (indexCh == ' ') {section1 = line.substring(0, count1 - 1);}
+						else {section1 = line.substring(0, count1);}
 						// Checks for a space after the colon
 						indexCh = line.charAt(count1 + 1);
 						if (indexCh == ' ') {section2 = line.substring(count1 + 2, line.length());}
