@@ -10,21 +10,46 @@ import java.io.BufferedReader;
 public class iniReader
 {
 	@SuppressWarnings("rawtypes")
-	ArrayList<ArrayList> iniContents = new ArrayList<ArrayList>();
-	BufferedReader reader = null;
+	ArrayList<ArrayList> iniContents;
+	File iniFile;
+	BufferedReader reader;
 	
+	// Initializers for object
+	public iniReader(String file)
+	{
+		iniFile = new File("/home/lvuser/" + file);
+	}
+	
+	public iniReader(String dir, String file)
+	{
+		iniFile = new File("" + dir + file);
+	}
+	
+	// This method returns the entire ArrayList
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public ArrayList<ArrayList> getFile(String file){
+	public ArrayList<ArrayList> getFile(){
+		// Declarations and clearing variables for multiple file use
 		int count1;
 		char indexCh;
 		String section1, section2;
-		File iniFile = new File("/home/lvuser/" + file);
+		reader = null;
+		iniContents = new ArrayList<ArrayList>();
+		
+		// Open file
 		try 
 		{
+			// Make BufferedReader and get new line, then start reading all the lines
 			reader = new BufferedReader(new FileReader (iniFile));
 			String line = reader.readLine();
 			while (line != null) 
 			{
+				// Checks for comment
+				if ((line.substring(0, 2).equals("//")) || (line.substring(0, 1).equals("#")))
+				{
+					line = reader.readLine();
+					continue;
+				}
+				
 				// Makes ArrayList with string and double
 				ArrayList lineData = new ArrayList();
 				count1 = 0;
@@ -42,11 +67,13 @@ public class iniReader
 						if (indexCh == ' ') {section2 = line.substring(count1 + 2, line.length());}
 						else {section2 = line.substring(count1 + 1, line.length());}
 						lineData.add(section1);
-						lineData.add(Double.parseDouble(section2));						
+						lineData.add(Double.parseDouble(section2));
+						break;
 					}
 					count1 += 1;
 				}
 				iniContents.add(lineData);
+				
 				// Must be at the end to read a new line
 				line = reader.readLine();
 				
@@ -63,5 +90,31 @@ public class iniReader
 			catch (IOException e) {e.printStackTrace();}
 			}
 		return iniContents;
+	}
+	
+	// This method only returns the value attached to a String
+	public double getValue(String name)
+	{
+		// Initializes variables
+		int count1 = 0;
+		double result = -101.314159;
+		
+		// Checks if getFile() has been run
+		try {
+			if (reader.equals(null)) {count1 = 0;}
+		} catch (NullPointerException e) {this.getFile();}
+				
+		// Runs through ArrayList
+		while (count1 != (iniContents.size()))
+		{
+			// Checks for equality to parameter
+			if (iniContents.get(count1).get(0).equals(name))
+			{
+				result = (double) iniContents.get(count1).get(1);
+				break;
+			}
+		}
+		// Return, nothing special here
+		return result;
 	}
 }
