@@ -25,6 +25,12 @@ public class iniReader
 			String line = reader.readLine();
 			while (line != null) 
 			{
+				// Checks for comment
+				if ((line.substring(0, 3).equals("//")) or (line.substring(0, 2).equals("#"))
+				{
+					line = reader.readLine();
+					continue;
+				}
 				// Makes ArrayList with string and double
 				ArrayList lineData = new ArrayList();
 				count1 = 0;
@@ -42,7 +48,8 @@ public class iniReader
 						if (indexCh == ' ') {section2 = line.substring(count1 + 2, line.length());}
 						else {section2 = line.substring(count1 + 1, line.length());}
 						lineData.add(section1);
-						lineData.add(Double.parseDouble(section2));						
+						lineData.add(Double.parseDouble(section2));
+						break;
 					}
 					count1 += 1;
 				}
