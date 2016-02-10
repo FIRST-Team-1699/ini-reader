@@ -10,17 +10,23 @@ import java.io.BufferedReader;
 public class iniReader
 {
 	@SuppressWarnings("rawtypes")
-	ArrayList<ArrayList> iniContents = new ArrayList<ArrayList>();
-	BufferedReader reader = null;
+	ArrayList<ArrayList> iniContents;
+	BufferedReader reader;
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public ArrayList<ArrayList> getFile(String file){
+		// Declarations and clearing variables for multiple file use
 		int count1;
 		char indexCh;
 		String section1, section2;
+		reader = null;
+		iniContents = new ArrayList<ArrayList>();
+		
+		// Open file
 		File iniFile = new File("/home/lvuser/" + file);
 		try 
 		{
+			// Make BufferedReader and get new line, then start reading all the lines
 			reader = new BufferedReader(new FileReader (iniFile));
 			String line = reader.readLine();
 			while (line != null) 
