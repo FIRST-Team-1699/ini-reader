@@ -43,6 +43,13 @@ public class iniReader
 			String line = reader.readLine();
 			while (line != null) 
 			{
+				// Tests for blank line or newline
+				if ((line.equals("")) || (line.equals(" ")) || (line.equals("\n")) || (line.equals("\r\n")))
+				{
+					line = reader.readLine();
+					continue;
+				}
+				
 				// Checks for comment
 				if ((line.substring(0, 2).equals("//")) || (line.substring(0, 1).equals("#")))
 				{

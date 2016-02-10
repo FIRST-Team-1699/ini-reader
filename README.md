@@ -15,7 +15,8 @@ The 2015-archive branch was written in LabView, master is written in Java.
 ## ini Config
 - To make a variable (named speed1 with a value of .85), use speed1:.85 or speed1 : .85 or speed1: .85 (or speed1 :.85 if you really want)
 - Varaiable note: they are case (and type sensitive) and can contain spaces (just not at the end or they will be considered whitespace)
-- Comments in the ini are supported (and recommended); they can be made with a // or # at the beginning of a line.
+- Comments in the ini are supported (and recommended); they can be made with a // or # at the beginning of a line
+- See example.ini, which builds off this
 
 # Final Comments
 
