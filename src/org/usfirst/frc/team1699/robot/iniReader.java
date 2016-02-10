@@ -11,10 +11,7 @@ public class iniReader
 {
 	@SuppressWarnings("rawtypes")
 	ArrayList<ArrayList> iniContents;
-<<<<<<< HEAD:src/org/usfirst/frc/team1699/robot/iniReader.java
 	File iniFile;
-=======
->>>>>>> origin/master:org/usfirst/frc/team1699/robot/iniReader.java
 	BufferedReader reader;
 	
 	// Initializers for object
@@ -30,11 +27,7 @@ public class iniReader
 	
 	// This method returns the entire ArrayList
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-<<<<<<< HEAD:src/org/usfirst/frc/team1699/robot/iniReader.java
 	public ArrayList<ArrayList> getFile(){
-=======
-	public ArrayList<ArrayList> getFile(String file){
->>>>>>> origin/master:org/usfirst/frc/team1699/robot/iniReader.java
 		// Declarations and clearing variables for multiple file use
 		int count1;
 		char indexCh;
@@ -43,10 +36,6 @@ public class iniReader
 		iniContents = new ArrayList<ArrayList>();
 		
 		// Open file
-<<<<<<< HEAD:src/org/usfirst/frc/team1699/robot/iniReader.java
-=======
-		File iniFile = new File("/home/lvuser/" + file);
->>>>>>> origin/master:org/usfirst/frc/team1699/robot/iniReader.java
 		try 
 		{
 			// Make BufferedReader and get new line, then start reading all the lines
@@ -55,19 +44,12 @@ public class iniReader
 			while (line != null) 
 			{
 				// Checks for comment
-<<<<<<< HEAD:src/org/usfirst/frc/team1699/robot/iniReader.java
 				if ((line.substring(0, 2).equals("//")) || (line.substring(0, 1).equals("#")))
-=======
-				if ((line.substring(0, 3).equals("//")) or (line.substring(0, 2).equals("#"))
->>>>>>> origin/master:org/usfirst/frc/team1699/robot/iniReader.java
 				{
 					line = reader.readLine();
 					continue;
 				}
-<<<<<<< HEAD:src/org/usfirst/frc/team1699/robot/iniReader.java
 				
-=======
->>>>>>> origin/master:org/usfirst/frc/team1699/robot/iniReader.java
 				// Makes ArrayList with string and double
 				ArrayList lineData = new ArrayList();
 				count1 = 0;
@@ -109,7 +91,6 @@ public class iniReader
 			}
 		return iniContents;
 	}
-<<<<<<< HEAD:src/org/usfirst/frc/team1699/robot/iniReader.java
 	
 	// This method only returns the value attached to a String
 	public double getValue(String name)
@@ -137,6 +118,3 @@ public class iniReader
 		return result;
 	}
 }
-=======
-}
->>>>>>> origin/master:org/usfirst/frc/team1699/robot/iniReader.java
