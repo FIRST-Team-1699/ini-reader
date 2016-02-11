@@ -1,3 +1,8 @@
+/*
+FIRST Team 1699's ini Reader
+
+v1.0rc1, published 2/10/16
+*/
 package org.usfirst.frc.team1699.robot;
 
 import java.io.File;
