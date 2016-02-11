@@ -125,6 +125,7 @@ public class iniReader
 				result = (double) iniContents.get(count1).get(1);
 				break;
 			}
+			count1 += 1;
 		}
 		// Return, nothing special here
 		return result;
