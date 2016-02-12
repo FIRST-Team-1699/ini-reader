@@ -10,7 +10,7 @@ The 2015-archive branch was written in LabView, master is written in Java.
 - iniReader(dir, fileName) - same as above, except reads from dir + fileName
 - getFile() - returns ArrayList<ArrayList> where [[1st string, 1st double], [2nd string, 2nd double]...] 
 - getValue(name) - returns a double with whatever corresponds with the String name in the file
-- getValue note: if you are getting a returned value of -101.3141592, it cannot find your variable name
+- getValue note: if it cannot fine your variable name, it will return null and probably cause errors
 
 ## ini Config
 - To make a variable (named speed1 with a value of .85), use speed1:.85 or speed1 : .85 or speed1: .85 (or speed1 :.85 if you really want)

@@ -105,11 +105,12 @@ public class iniReader
 	}
 	
 	// This method only returns the value attached to a String
+	@SuppressWarnings("null")
 	public double getValue(String name)
 	{
 		// Initializes variables
 		int count1 = 0;
-		double result = -101.314159;
+		double result = 0;
 		
 		// Checks if getFile() has been run
 		try {
@@ -125,7 +126,11 @@ public class iniReader
 				result = (double) iniContents.get(count1).get(1);
 				break;
 			}
+			else {result = (Double) null;}
 		}
+		// Checks if not found
+		if (result == (Double) null) {System.out.println("Variable not found; null returned. Expect errors/crash.");}
+		
 		// Return, nothing special here
 		return result;
 	}
