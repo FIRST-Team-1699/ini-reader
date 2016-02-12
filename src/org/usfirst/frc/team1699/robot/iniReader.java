@@ -127,10 +127,13 @@ public class iniReader
 				break;
 			}
 			else {result = (Double) null;}
+		
+			// Onward! *coconuts clapping*
+			count1 += 1;
 		}
 		// Checks if not found
-		if (result == (Double) null) {System.out.println("Variable not found; null returned. Expect errors/crash.");}
-		
+		if (result == (Double) null) {System.out.println("Variable not found; null returned. Expect errors/crash.");}	
+
 		// Return, nothing special here
 		return result;
 	}
