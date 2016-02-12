@@ -109,8 +109,8 @@ public class iniReader
 	{
 		// Initializes variables
 		int count1 = 0;
-		double result = -101.314159;
-		
+		double result = 0;
+		Image 
 		// Checks if getFile() has been run
 		try {
 			if (reader.equals(null)) {count1 = 0;}
@@ -127,6 +127,7 @@ public class iniReader
 			}
 			count1 += 1;
 		}
+// recode so that return is initialized and gets set to null if not found 
 		// Return, nothing special here
 		return result;
 	}
