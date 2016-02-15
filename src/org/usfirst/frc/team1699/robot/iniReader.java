@@ -1,7 +1,7 @@
 /*
 FIRST Team 1699's ini Reader
 
-v1.0rc2, published 2/10/16
+v1.0rc3, published 2/14/16
 */
 package org.usfirst.frc.team1699.robot;
 
@@ -23,11 +23,13 @@ public class iniReader
 	public iniReader(String file)
 	{
 		iniFile = new File("/home/lvuser/" + file);
+		this.messageMaker("Initalized with file: " + iniFile.getAbsolutePath());
 	}
 	
 	public iniReader(String dir, String file)
 	{
 		iniFile = new File("" + dir + file);
+		this.messageMaker("Initalized with file: " + iniFile.getAbsolutePath());
 	}
 	
 	// This method returns the entire ArrayList
@@ -131,15 +133,50 @@ public class iniReader
 			// Onward! *coconuts clapping*
 			count1 += 1;
 		}
-		// Checks if not found
-		try {if (result == (Double) null) {}}
-		catch (NullPointerException e)
+		if (result == (Double) null) 
 		{
-			System.out.println("Variable not found. Returning default value.");
+			this.messageMaker("Variable not found. Returning default value.");
 			result = 0.0;
 		}
-
 		// Return, nothing special here
 		return result;
+	}
+	
+	// A quick method to make printing clean boxes around important info
+	// Used to make info more visible in console
+	private void messageMaker(String output)
+	{
+		// Time to make sure people can make sense of this after I leave...
+		System.out.println("|------------------------------------------------------|");
+		System.out.println("| Team 1699 iniReader                                  |");
+		
+		// Available characters for print
+		// "Team 1699 iniReader                                 " should match printRoom
+		final int printRoom = 52;
+		
+		// Some variables
+		String printed;
+		String notPrinted = output.substring(0, output.length());
+		while(notPrinted.length() != 0)
+		{
+			// Checks if it can be printed on one line
+			if (notPrinted.length() <= printRoom)
+			{
+				System.out.print("| " + notPrinted);
+				for (int count1 = notPrinted.length(); count1 != printRoom; count1 += 1){System.out.print(" ");}
+				System.out.print(" |\n");
+				break;
+			} 
+			// Break up lines :O
+			else
+			{
+				printed = "| " + notPrinted.substring(0, printRoom) + " |";
+				notPrinted = notPrinted.substring(47, notPrinted.length());
+				System.out.println(printed);
+			}
+		}
+		
+		// Closer.
+		System.out.println("|------------------------------------------------------|");		
 	}
 }
