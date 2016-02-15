@@ -1,7 +1,7 @@
 /*
 FIRST Team 1699's ini Reader
 
-v1.0rc2, published 2/12/16
+v1.0rc2, published 2/10/16
 */
 package org.usfirst.frc.team1699.robot;
 
@@ -110,7 +110,7 @@ public class iniReader
 	{
 		// Initializes variables
 		int count1 = 0;
-		double result = 0;
+		Double result = new Double(0);
 		
 		// Checks if getFile() has been run
 		try {
@@ -132,7 +132,12 @@ public class iniReader
 			count1 += 1;
 		}
 		// Checks if not found
-		if (result == (Double) null) {System.out.println("Variable not found; null returned. Expect errors/crash.");}	
+		try {if (result == (Double) null) {}}
+		catch (NullPointerException e)
+		{
+			System.out.println("Variable not found. Returning default value.");
+			result = 0.0;
+		}
 
 		// Return, nothing special here
 		return result;
