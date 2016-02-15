@@ -107,7 +107,6 @@ public class iniReader
 	}
 	
 	// This method only returns the value attached to a String
-	@SuppressWarnings("null")
 	public double getValue(String name)
 	{
 		// Initializes variables
