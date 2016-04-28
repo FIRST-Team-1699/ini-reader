@@ -1,7 +1,7 @@
 # ini-Reader
 Our .ini reader, used in many projects over many years, since 2011. 
 
-The 2015-archive branch was written in LabView, master is written in Java.
+This is the code used in 2016, master is the new and improved iniReader.
 
 # Usage
 
@@ -17,6 +17,7 @@ The 2015-archive branch was written in LabView, master is written in Java.
 - Varaiable note: they are case (and type sensitive) and can contain spaces (just not at the end or they will be considered whitespace)
 - Comments in the ini are supported (and recommended); they can be made with a // or # at the beginning of a line
 - See example.ini, which builds off this
+- Use example.ini. This may be repetitive, but it shows how to make a file to be read. 
 
 # Final Comments
 
