@@ -1,7 +1,7 @@
 # ini-Reader
 Our .ini reader, used in many projects over many years, since 2011. 
 
-This is the code used in 2016, master is the new and improved iniReader.
+This is the code used in 2016, `master` is the new and improved iniReader.
 
 # Usage
 
