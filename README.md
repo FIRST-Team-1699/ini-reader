@@ -19,7 +19,7 @@ Instantiate `ConfigFile`, has three constructors:
 
 Because this version of the ini-Reader conforms to ini syntax, mentioned aboved, the file setup is different then pervious versions.
 
-First off, only **one** file is used. In order to accommodate for different subsystems or autonomous modes, sections are used. Just like the defined syntax, a section is defined by `[section]`.
+First off, only **one** file is used (in convention; there are no restrictions in the code though). In order to accommodate for different subsystems or autonomous modes, sections are used. Just like the defined syntax, a section is defined by `[section]`.
 
 Below a section header (and until the next header), is a group of configuration lines, where `name = value`. Names are **not** case-sensitive. Values can be integers, doubles, strings, booleans, a character, or a list of integers, doubles, booleans,  or strings. See `example.ini` for an example.
 
