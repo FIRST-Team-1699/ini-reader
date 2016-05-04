@@ -33,16 +33,16 @@ public class ConfigFile {
         this.readFile();
     }
 
-	public ConfigFile(String fileName)
+	public ConfigFile(String fullPath)
 	{
-		file = new File("/home/lvuser/" + fileName);
+		file = new File(fullPath);
 		MessageMaker.out("Initalized with file: " + file.getAbsolutePath());
         this.readFile();
     }
 
-	public ConfigFile(String dirName, String fileName)
+	public ConfigFile(File _file)
 	{
-		file = new File("" + dirName + fileName);
+		this.file = _file;
 		MessageMaker.out("Initalized with file: " + file.getAbsolutePath());
         this.readFile();
     }
@@ -132,7 +132,7 @@ public class ConfigFile {
                 }
 
                 // <insert witty joke here>
-                ConfigLine cld = new ConfigLine(section1, (Object) section2);
+                ConfigLine cld = new ConfigLine(section1.toLowerCase(), (Object) section2);
                 section.add(cld);
 
                 // Read the next line

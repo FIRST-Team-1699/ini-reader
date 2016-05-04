@@ -42,6 +42,7 @@ public class ConfigSection {
 		// Initializes variables
 		int count1 = 0;
 		Object result = new Object();
+		name = name.toLowerCase();
 						
 		// Runs through ArrayList
 		while (count1 != (lines.size()))
