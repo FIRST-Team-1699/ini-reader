@@ -1,2 +1,3 @@
 # ini-Reader
-Our .ini reader, used in many projects over many years.
+
+The original .ini reader, made in 2011-ish and used until 2015. Written in LabView, it was retired when we moved languages. 
