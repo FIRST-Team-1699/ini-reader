@@ -5,7 +5,7 @@
  *
  * A class that represents a file containing configuration info.
  * 
- * v2.0-alpha, released on 5/2/2016
+ * v2.0-alpha, released on 5/18/2016
  *
  */
 package org.usfirst.frc.team1699.robot.inireader;
@@ -19,7 +19,7 @@ import java.io.BufferedReader;
 
 public class ConfigFile {
 
-    // Initializers
+	// Initializers
 	File file;
 	BufferedReader reader;
     ArrayList<ConfigSection> sections = new ArrayList<ConfigSection>();
@@ -152,14 +152,15 @@ public class ConfigFile {
         
     }
     
-    public ConfigSection findSection(String name)
+	public ConfigSection findSection(String name) 
     {
-    	ConfigSection output = null;
-    	for (ConfigSection cs : sections)
-    	{
-    		if (cs.getName().equals(name)) {return cs;}
-    	}
-    	return output;
+    	// Cycle through the ArrayList, return ConfigSection if names are equal
+		for (ConfigSection cs : sections)
+		{
+			if (cs.getName().equals(name)) {return cs;}
+		}
+    	// Throw exception if not found
+		throw new NotFoundException("Section not found: " + name + ".");
     }
     
     

@@ -41,7 +41,7 @@ public class ConfigSection {
 	{
 		// Initializes variables
 		int count1 = 0;
-		Object result = new Object();
+		Object result = null;
 		name = name.toLowerCase();
 						
 		// Runs through ArrayList
@@ -57,7 +57,9 @@ public class ConfigSection {
 			// Onward! *coconuts clapping*
 			count1 += 1;
 		}
-				
+		
+		if (result == null) {throw new NotFoundException("Section not found: " + name + ".");}
+		
 		return result;
 	}
 	
