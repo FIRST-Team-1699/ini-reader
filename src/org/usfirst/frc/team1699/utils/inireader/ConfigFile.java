@@ -5,7 +5,7 @@
  * 
  * @author thatging3rkid, FIRST Team 1699
  *
- * @version v2.0rc2, released on 10/19/2016
+ * @version v2.0rc1, released on 10/19/2016
  */
 package org.usfirst.frc.team1699.utils.inireader;
 
