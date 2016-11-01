@@ -1,4 +1,4 @@
-# ini-Reader
+# ini-reader
 
 Our .ini reader, used in many projects over many years, since 2011.
 
