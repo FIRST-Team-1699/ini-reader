@@ -61,8 +61,8 @@ public class ConfigSection {
 	/**
 	 * Gets the ConfigLine at a specified point. Useful for autonomous. Returns null if the index is out of bounds.
 	 * 
-	 * @param index  index in the ArrayList to return
-	 * @return  the ConfigFile at the specified index, null if it does not exist
+	 * @param index index in the ArrayList to return
+	 * @return the ConfigFile at the specified index, null if it does not exist
 	 */
 	public ConfigLine getLine(int index) {
 		try {
@@ -78,7 +78,7 @@ public class ConfigSection {
 	 * 
 	 * @return an ArrayList of ConfigLines that make up this ConfigSection
 	 */
-	public ArrayList<ConfigLine> getContents() {
+	public List<ConfigLine> getConfigLines() {
 		if (this.lines == null) {
 			return null;
 		} else {
@@ -92,11 +92,32 @@ public class ConfigSection {
 	}
 	
 	/**
+	 * Get the contents of this ConfigSection as a List of Strings. 
+	 * 
+	 * @return an ArrayList of Strings made from the ConfigLines in the ConfigSection
+	 */
+	public List<String> getStringValues() {
+		if (this.lines == null) {
+			return null;
+		} else {
+			ArrayList<String> output = new ArrayList<>();
+			for (ConfigLine cl : this.lines) {
+				try {
+					output.add((String) cl.getValue());
+				} catch (ClassCastException e) {
+					System.err.println("Error casting on line: " + cl.toString());
+				}
+			}
+			return output;
+		}
+	}
+	
+	/**
 	 * Get the number of lines in this ConfigSection
 	 * 
 	 * @return the number of lines in this ConfigSection
 	 */
-	public int size() {
+	public int lines() {
 		return this.lines.size();
 	}
 	

@@ -5,7 +5,7 @@
  * 
  * @author thatging3rkid, FIRST Team 1699
  *
- * @version v2.0rc1, released on 10/19/2016
+ * @version v2.0rc2, released on 11/6/2016
  */
 package org.usfirst.frc.team1699.utils.inireader;
 
@@ -101,6 +101,15 @@ public class ConfigFile {
 				char indexCh;
 				String section1 = new String();
 				String section2 = new String();
+				
+				
+				// Case for if no "=" exists. Allows for easier autonomous, but you have to code it yourself :P 
+				if (!line.contains("=")) {
+					section1 = "";
+					section2 = new String(line);
+				}
+				
+				
 				while (count1 != line.length()) {
 					indexCh = line.charAt(count1);
 					if (indexCh == '=') {
@@ -132,12 +141,6 @@ public class ConfigFile {
 						break;
 					}
 					count1 += 1;
-				}
-				
-				// Case if '=' is not found, allows for more freedom, but you have to code it yourself
-				if (count1 == line.length()) {
-					section1 = "";
-					section2 = line; 
 				}
 				
 				// <insert witty joke here>
