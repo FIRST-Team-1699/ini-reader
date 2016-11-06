@@ -31,9 +31,9 @@ From the `ConfigSection`, use the `findInteger(String name)` to get an integer f
 
 # FAQ
 
-Can I have two values on one line? *No, values and section headers are separated by line.*
+Can I have two values on one line? *Kind of. The first `=` will always be used to split the line into name and value. However, if you use `\=`, you can have names and values on a single line, but you must process it yourself. You could also use an Array if you want two (or more) values under a single name.*
 
-What directories can the file be put in on a roboRIO? *We use `/home/lvuser` because that is the working directory for robot code, but it can theoretically go anywhere, as long as it won't overwrite another file and won't be deleted. I highly recommend using `/home/lvuser`, unless you know a better place.*
+What directories can the file be put in on a roboRIO? *We use `/home/lvuser` because that is the working directory for robot code, but it can theoretically go anywhere, as long as it won't overwrite another file and won't be deleted (and has the correct permissions). I highly recommend using `/home/lvuser`, unless you know a better place.*
 
 Why did you make this more complicated? *If the previous version worked well for you, go use it, it's under `2016-archive`. But, we were having a problem where we have 10+ ini files on our RIO, and if we wanted more autonomous modes, we needed more files. This allows us to have one file, and a lot less clutter.*
 
