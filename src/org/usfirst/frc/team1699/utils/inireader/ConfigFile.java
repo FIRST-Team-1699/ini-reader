@@ -47,6 +47,7 @@ public class ConfigFile {
 
 	/**
 	 * Creates a ConfigFile with the specified File
+	 * 
 	 * @param file
 	 */
 	public ConfigFile(File file) {
@@ -56,7 +57,7 @@ public class ConfigFile {
 	}
 
 	/**
-	 * Reads the file. Executed automatically on construction, but it can be force reread.
+	 * Reads the file. Executed automatically on construction, but it can be force-reread.
 	 */
 	public void readFile() {
 		ConfigSection section = new ConfigSection("global");
@@ -99,16 +100,14 @@ public class ConfigFile {
 				// Starts looking for values in the line
 				int count1 = 0;
 				char indexCh;
-				String section1 = new String();
-				String section2 = new String();
-				
+				String section1 = null;
+				String section2 = null;
 				
 				// Case for if no "=" exists. Allows for easier autonomous, but you have to code it yourself :P 
 				if (!line.contains("=")) {
 					section1 = "";
-					section2 = new String(line);
-				}
-				
+					section2 = line;
+				} 
 				
 				while (count1 != line.length()) {
 					indexCh = line.charAt(count1);
@@ -142,6 +141,12 @@ public class ConfigFile {
 					}
 					count1 += 1;
 				}
+				
+				// Case for escape sequences causing the "=" to be skipped
+				if (section1 == null) {
+					section1 = "";
+					section2 = line;
+				} 
 				
 				// <insert witty joke here>
 				ConfigLine cld = new ConfigLine(section1.toLowerCase(), (Object) section2);
@@ -189,5 +194,14 @@ public class ConfigFile {
 			return null;
 		}
 		
+	}
+	
+	/**
+	 * Returns the number of ConfigSections that are in this ConfigFile.
+	 * 
+	 * @return number of COnfigSections in this ConfigFile
+	 */
+	public int sections() {
+		return this.sections.size();
 	}
 }
