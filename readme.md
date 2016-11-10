@@ -37,7 +37,7 @@ The ConfigLine now uses a generic for it's value of the line. It is automaticall
 
 By using a safe cast method, the type is checked before attempting a cast, ensuring that a ClassCastException will not be thrown. 
 
-tl;dr **do not use the **`getRawValue()` **method. Get the class by using** `Class.class` **or **`Object.getClass()`**.**
+tl;dr **do not use the** `getRawValue()` **method. Get the class by using** `Class.class` **or** `Object.getClass()` **.**
 
 # FAQ
 
