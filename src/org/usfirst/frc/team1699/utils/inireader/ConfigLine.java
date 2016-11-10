@@ -52,6 +52,8 @@ public class ConfigLine<T> {
 	/**
 	 * Gets the value of the line in a safe manner. It checks the class type before returning a value.
 	 *  
+	 * @param <L> the type to check against
+	 *  
 	 * @param class_type the Class of the type
 	 * @return the value of this ConfigLine or null if the types do not match
 	 */
@@ -66,7 +68,7 @@ public class ConfigLine<T> {
 	/**
 	 * Creates a String that represents the line. For debugging or writing to a file.
 	 * 
-	 * @return - a String that represents the line
+	 * @return a String that represents the line
 	 */
 	@Override
 	public String toString() {

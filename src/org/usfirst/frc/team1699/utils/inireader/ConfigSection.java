@@ -22,16 +22,16 @@ public class ConfigSection {
 	/**
 	 * Creates a ConfigSection with the name provided
 	 * 
-	 * @param _name  the name of the ConfiSection
+	 * @param name the name of the ConfiSection
 	 */
-	public ConfigSection(String _name) {
-		this.name = _name;
+	public ConfigSection(String name) {
+		this.name = name;
 	}
 
 	/**
 	 * Gets the name of the ConfigSection
 	 * 
-	 * @return  name of the ConfigSection
+	 * @return name of the ConfigSection
 	 */
 	public String getName() {
 		return this.name;
@@ -40,7 +40,7 @@ public class ConfigSection {
 	/**
 	 * Add the ConfigLine to the ConfigSection
 	 * 
-	 * @param line  the ConfigLine to be added
+	 * @param line the ConfigLine to be added
 	 */
 	public void add(ConfigLine<?> line) {
 		lines.add(line);
@@ -48,10 +48,11 @@ public class ConfigSection {
 
 	/**
 	 * Create a ConfigLine and add it to the ConfigSection
-	 * @param <T>
 	 * 
-	 * @param _name  the name for the ConfigLine to be added
-	 * @param _value  the value for the ConfigLine to be added
+	 * @param <T> the type of the new ConfigLine
+	 * 
+	 * @param name  the name for the ConfigLine to be added
+	 * @param value  the value for the ConfigLine to be added
 	 */
 	public <T> void add(String name, T value) {
 		ConfigLine<T> line = new ConfigLine<T>(name, value);
@@ -107,6 +108,8 @@ public class ConfigSection {
 	
 	/**
 	 * Gets the value of a ConfigLine without using a dot operator! Cool!
+	 * 
+	 * @param <L> the type to check against
 	 * 
 	 * @param name the name of the ConfigLine to look for
 	 * @param class_type the Class of the type

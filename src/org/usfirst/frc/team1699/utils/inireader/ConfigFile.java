@@ -49,7 +49,7 @@ public class ConfigFile {
 	/**
 	 * Creates a ConfigFile with the specified File
 	 * 
-	 * @param file
+	 * @param file the file that will be read from
 	 */
 	public ConfigFile(File file) {
 		this.file = file;

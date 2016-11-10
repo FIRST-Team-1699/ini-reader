@@ -1,7 +1,10 @@
-
+/**
+ * An example of how to use the ConfigFile reader
+ */
 import java.util.ArrayList;
 
-import org.usfirst.frc.team1699.utils.inireader.*;
+import org.usfirst.frc.team1699.utils.inireader.ConfigFile;
+import org.usfirst.frc.team1699.utils.inireader.ConfigLine;
 import org.usfirst.frc.team1699.utils.inireader.ConfigSection;
 
 public class example
