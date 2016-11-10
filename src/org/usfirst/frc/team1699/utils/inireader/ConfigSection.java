@@ -8,7 +8,6 @@
 package org.usfirst.frc.team1699.utils.inireader;
 
 import java.util.List;
-import java.util.Arrays;
 import java.util.ArrayList;
 
 /**
@@ -18,7 +17,7 @@ public class ConfigSection {
 
 	private String name;
 
-	private ArrayList<ConfigLine> lines = new ArrayList<>();
+	private ArrayList<ConfigLine<?>> lines = new ArrayList<>();
 
 	/**
 	 * Creates a ConfigSection with the name provided
@@ -43,18 +42,19 @@ public class ConfigSection {
 	 * 
 	 * @param line  the ConfigLine to be added
 	 */
-	public void add(ConfigLine line) {
+	public void add(ConfigLine<?> line) {
 		lines.add(line);
 	}
 
 	/**
 	 * Create a ConfigLine and add it to the ConfigSection
+	 * @param <T>
 	 * 
 	 * @param _name  the name for the ConfigLine to be added
 	 * @param _value  the value for the ConfigLine to be added
 	 */
-	public void add(String _name, Object _value) {
-		ConfigLine line = new ConfigLine(_name, _value);
+	public <T> void add(String name, T value) {
+		ConfigLine<T> line = new ConfigLine<T>(name, value);
 		this.add(line);
 	}
 
@@ -64,13 +64,27 @@ public class ConfigSection {
 	 * @param index index in the ArrayList to return
 	 * @return the ConfigFile at the specified index, null if it does not exist
 	 */
-	public ConfigLine getLine(int index) {
+	public ConfigLine<?> getLine(int index) {
 		try {
-			ConfigLine cla = this.lines.get(index);
-			return new ConfigLine(cla.getName(), cla.getValue());
-		} catch (ArrayIndexOutOfBoundsException e) {
+			return new ConfigLine<>(this.lines.get(index));
+		} catch (IndexOutOfBoundsException e) {
 			return null;
 		}
+	}
+	
+	/**
+	 * Get a ConfigLine based on the provided name. Returns the first ConfigLine with that name.
+	 * 
+	 * @param name the name of the ConfigLine to look for
+	 * @return the ConfigLine that matches the specified name, null if it does not exist
+	 */
+	public ConfigLine<?> getLine(String name) {
+		for (ConfigLine<?> cl : lines) {
+			if (cl.getName().equals(name)) {
+				return new ConfigLine<>(cl);
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -78,18 +92,35 @@ public class ConfigSection {
 	 * 
 	 * @return an ArrayList of ConfigLines that make up this ConfigSection
 	 */
-	public List<ConfigLine> getConfigLines() {
+	public List<ConfigLine<?>> getLines() {
 		if (this.lines == null) {
 			return null;
 		} else {
-			ArrayList<ConfigLine> output = new ArrayList<>();
-			for (ConfigLine cl : this.lines) {
-				ConfigLine cla = new ConfigLine(cl.getName(), cl.getValue());
+			ArrayList<ConfigLine<?>> output = new ArrayList<>();
+			for (ConfigLine<?> cl : this.lines) {
+				ConfigLine<?> cla = new ConfigLine<>(cl);
 				output.add(cla);
 			}
 			return output;
 		}
 	}
+	
+	/**
+	 * Gets the value of a ConfigLine without using a dot operator! Cool!
+	 * 
+	 * @param name the name of the ConfigLine to look for
+	 * @param class_type the Class of the type
+	 * @return the the value of this ConfigLine or null if the types do not match
+	 */
+	@SuppressWarnings("unchecked") // it is checked so...
+	public <L> L getLineValue(String name, Class<L> class_type) {
+		ConfigLine<?> out = this.getLine(name);
+		if (out.getRawValue().getClass().equals(class_type)) {
+			return (L) out.getRawValue(); 
+		} 
+		return null;
+	}
+	
 	
 	/**
 	 * Get the contents of this ConfigSection as a List of Strings. 
@@ -101,9 +132,9 @@ public class ConfigSection {
 			return null;
 		} else {
 			ArrayList<String> output = new ArrayList<>();
-			for (ConfigLine cl : this.lines) {
+			for (ConfigLine<?> cl : this.lines) {
 				try {
-					output.add((String) cl.getValue());
+					output.add((String) cl.getRawValue());
 				} catch (ClassCastException e) {
 					System.err.println("Error casting on line: " + cl.toString());
 				}
@@ -117,173 +148,10 @@ public class ConfigSection {
 	 * 
 	 * @return the number of lines in this ConfigSection
 	 */
-	public int lines() {
+	public int size() {
 		return this.lines.size();
 	}
 	
-	/**
-	 * A private method to find the specified object. In order to access it, you have to use a wrapper method.
-	 * 
-	 * @param name  the name of the line to look for
-	 * @return  the Object of the value if found
-	 */
-	private Object findObject(String name) {
-		// Initializes variables
-		int count1 = 0;
-		Object result = null;
-		name = name.toLowerCase();
-
-		// Runs through ArrayList
-		while (count1 != (lines.size())) {
-			// Checks for equality to parameter
-			if (lines.get(count1).getName().equals(name)) {
-				result = lines.get(count1).getValue();
-				break;
-			}
-
-			// Onward! *coconuts clapping*
-			count1 += 1;
-		}
-
-		if (result == null) {
-			throw new NotFoundException("Name not found: " + name + ".");
-		}
-
-		return result;
-	}
-
-	/**
-	 * Internal method for cleaning Strings
-	 * 
-	 * @param s  String to be cleaned
-	 * @return  the cleaned String
-	 */
-	private String cleanString(String s) {
-		for (int count1 = 0; count1 < s.length(); count1 += 1) {
-			if ((s.charAt(count1) == '[') || (s.charAt(count1) == ']')) {
-				String before = "";
-				String after = "";
-				try {
-					before = s.substring(0, count1);
-				} catch (Exception e) {
-					before = "";
-				}
-				try {
-					after = s.substring(count1 + 1);
-				} catch (Exception e) {
-					after = "";
-				}
-				s = before + after;
-			}
-		}
-		return s;
-	}
-
-	/**
-	 * Wraps findObject() for an Integer
-	 * 
-	 * @param name name of the ConfigLine to look for
-	 * @return an Integer representation of the value at name
-	 */
-	public Integer findInt(String name) {
-		return Integer.parseInt(this.findObject(name).toString());
-	}
-
-	/**
-	 * Wraps findObject() for a Double
-	 * 
-	 * @param name name of the ConfigLine to look for
-	 * @return a Double representation of the value at name
-	 */
-	public Double findDouble(String name) {
-		return Double.parseDouble(this.findObject(name).toString());
-	}
-
-	/**
-	 * Wraps findObject() for a Boolean
-	 * 
-	 * @param name name of the ConfigLine to look for
-	 * @return a Boolean representation of the value at name
-	 */
-	public Boolean findBool(String name) {
-		return Boolean.parseBoolean(this.findObject(name).toString());
-	}
-
-	/**
-	 * Wraps findObject() for a String
-	 * 
-	 * @param name name of the ConfigLine to look for
-	 * @return a String representation of the value at name
-	 */
-	public String findString(String name) {
-		return this.findObject(name).toString();
-	}
-
-	/**
-	 * Wraps findObject() for a Character
-	 * 
-	 * @param name name of the ConfigLine to look for
-	 * @return a Character representation of the value at name
-	 */
-	public Character findChar(String name) {
-		return this.findObject(name).toString().charAt(0);
-	}
-
-	/**
-	 * Wraps findObject() for a {@literal List<String>}
-	 * 
-	 * @param name name of the ConfigLine to look for
-	 * @return a {@literal List<String>} representation of the value at name
-	 */
-	public List<String> findListString(String name) {
-		return Arrays.asList(this.cleanString(this.findObject(name).toString()).split("\\s*,\\s*"));
-	}
-
-	/**
-	 * Wraps findObject() for a {@literal List<Integer>}
-	 * 
-	 * @param name name of the ConfigLine to look for
-	 * @return a {@literal List<Integer>} representation of the value at name
-	 */
-	public List<Integer> findListInt(String name) {
-		List<Integer> out = new ArrayList<Integer>();
-		for (String s : this.findListString(name)) {
-			s = this.cleanString(s);
-			out.add(Integer.parseInt(s));
-		}
-		return out;
-	}
-
-	/**
-	 * Wraps findObject() for a {@literal List<Double>}
-	 * 
-	 * @param name name of the ConfigLine to look for
-	 * @return a {@literal List<Double>} representation of the value at name
-	 */
-	public List<Double> findListDouble(String name) {
-		List<Double> out = new ArrayList<Double>();
-		for (String s : this.findListString(name)) {
-			s = this.cleanString(s);
-			out.add(Double.parseDouble(s));
-		}
-		return out;
-	}
-
-	/**
-	 * Wraps findObject() for a {@literal List<Boolean>}
-	 * 
-	 * @param name name of the ConfigLine to look for
-	 * @return a {@literal List<Boolean>} representation of the value at name
-	 */
-	public List<Boolean> findListBool(String name) {
-		List<Boolean> out = new ArrayList<Boolean>();
-		for (String s : this.findListString(name)) {
-			s = this.cleanString(s);
-			out.add(Boolean.parseBoolean(s));
-		}
-		return out;
-	}
-
 	/**
 	 * Generates a String representing this ConfigSection
 	 * 
@@ -293,7 +161,7 @@ public class ConfigSection {
 	public String toString() {
 		String output = "";
 		output = output + "Section: " + this.name + "\n";
-		for (ConfigLine cl : lines) {
+		for (ConfigLine<?> cl : lines) {
 			output = output + cl.toString() + "\n";
 		}
 		if (output.charAt(output.length() - 1) == '\n') {

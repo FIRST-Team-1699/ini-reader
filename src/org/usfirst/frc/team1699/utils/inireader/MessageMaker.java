@@ -18,7 +18,7 @@ public class MessageMaker {
 
 		// Available characters for print
 		// "Team 1699 ini-Reader " should match printRoom
-		final int printRoom = 52;
+		final int printRoom = 53;
 
 		// Some variables
 		String printed;
@@ -40,6 +40,6 @@ public class MessageMaker {
 		}
 
 		// Closer.
-		System.out.println("|------------------------------------------------------|");
+		System.out.println("|-------------------------------------------------------|");
 	}
 }

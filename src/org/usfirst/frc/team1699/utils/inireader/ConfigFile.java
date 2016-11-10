@@ -5,7 +5,7 @@
  * 
  * @author thatging3rkid, FIRST Team 1699
  *
- * @version v2.0rc2, released on 11/6/2016
+ * @version v2.1rc1, released on 11/9/2016
  */
 package org.usfirst.frc.team1699.utils.inireader;
 
@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 
@@ -63,7 +64,9 @@ public class ConfigFile {
 		ConfigSection section = new ConfigSection("global");
 		this.sections.add(section);
 
-		try (BufferedReader reader = new BufferedReader(new FileReader(file));) {
+		try (
+				BufferedReader reader = new BufferedReader(new FileReader(file));
+			) {
 			String line = reader.readLine();
 			while (line != null) {
 				// Checks for blank line
@@ -77,7 +80,7 @@ public class ConfigFile {
 					line = reader.readLine();
 					continue;
 				}
-
+				
 				// Checks for new section
 				if (line.substring(0, 1).equals("[")) {
 					int count1 = 0;
@@ -103,53 +106,145 @@ public class ConfigFile {
 				String section1 = null;
 				String section2 = null;
 				
-				// Case for if no "=" exists. Allows for easier autonomous, but you have to code it yourself :P 
-				if (!line.contains("=")) {
-					section1 = "";
-					section2 = line;
-				} 
-				
 				while (count1 != line.length()) {
+					// Update the character
 					indexCh = line.charAt(count1);
+					
+					// Check for an '='
 					if (indexCh == '=') {
-						// Gets the previous character
-						indexCh = line.charAt(count1 - 1);
-
-						// Check for escape sequence
-						if (indexCh == '\\') {
-							line = line.substring(0, count1 - 2) + line.substring(count1 - 1, line.length());
-							continue;
-						}
-						// Check for space
-						else if (indexCh == ' ') {
-							section1 = line.substring(0, count1 - 1);
-						} else {
-							section1 = line.substring(0, count1);
-						}
-
-						// Gets the next character
-						indexCh = line.charAt(count1 + 1);
-						// Checks for space
-						if (indexCh == ' ') {
-							section2 = line.substring(count1 + 2, line.length());
-						} else {
-							section2 = line.substring(count1 + 1, line.length());
-						}
-
-						// All done!
+						section1 = line.substring(0, count1).trim();
+						section2 = line.substring(count1 + 1).trim();
 						break;
-					}
+						
+					// Check for an escape sequence and cut it out
+					} else if (indexCh == '\\') {
+						line = line.substring(0, count1).trim() + line.substring(count1 + 1, line.length()).trim();
+					} 
+					
+					// To to the next character!
 					count1 += 1;
 				}
 				
-				// Case for escape sequences causing the "=" to be skipped
+				// Checks to see if the sections have been assigned values yet
 				if (section1 == null) {
 					section1 = "";
-					section2 = line;
+					section2 = new String(line);
 				} 
 				
-				// <insert witty joke here>
-				ConfigLine cld = new ConfigLine(section1.toLowerCase(), (Object) section2);
+				// Start the madness that is processing this value into a type
+				String cleaned = section2.trim();
+				ConfigLine<?> cld;
+				
+				// Check if the value is a List
+				if (StringUtils.containsList(cleaned)) {
+					// Clean the sting and remove the brackets
+					section2 = section2.trim();
+					cleaned = section2.substring(1, section2.length() - 1);
+					
+					// Check to see if the value contains Integers
+					if (StringUtils.containsInteger(cleaned)) {
+						try {
+							List<Integer> out = new ArrayList<>();
+							for (String s : cleaned.split(",")) {
+								out.add(Integer.parseInt(s.trim()));
+							}
+							cld = new ConfigLine<List<Integer>>(section1, out);
+						} catch (NumberFormatException e ) {
+							List<String> out = new ArrayList<>();
+							for (String s : cleaned.split(",")) {
+								out.add(s.trim());	
+							}
+							cld = new ConfigLine<List<String>>(section1, out);
+						}					
+					
+					// Check to see if the value contains Doubles
+					} else if (StringUtils.containsDouble(cleaned)) {
+						try {
+							List<Double> out = new ArrayList<>();
+							for (String s : cleaned.split(",")) {
+								out.add(Double.parseDouble(s.trim()));
+							}
+							cld = new ConfigLine<List<Double>>(section1, out);
+						} catch (NumberFormatException e ) {
+							List<String> out = new ArrayList<>();
+							for (String s : cleaned.split(",")) {
+								out.add(s.trim());	
+							}
+							cld = new ConfigLine<List<String>>(section1, out);
+						}
+					
+					// Check to see if the value contains Booleans
+					} else if (StringUtils.isBooleanList(cleaned)) {
+						try {
+							List<Boolean> out = new ArrayList<>();
+							for (String s : cleaned.split(",")) {
+								out.add(Boolean.parseBoolean(s.trim()));
+							}
+							cld = new ConfigLine<List<Boolean>>(section1, out);
+						} catch (NumberFormatException e ) {
+							List<String> out = new ArrayList<>();
+							for (String s : cleaned.split(",")) {
+								out.add(s.trim());	
+							}
+							cld = new ConfigLine<List<String>>(section1, out);
+						}
+					
+					// Check to see if the value is a List of Characters
+					} else if (StringUtils.isCharacterList(cleaned)) {
+						List<Character> out = new ArrayList<>();
+						for (String s : cleaned.split(",")) {
+							out.add(s.trim().charAt(0));	
+						}
+						cld = new ConfigLine<List<Character>>(section1, out);
+					// If nothing else, it's a List of Strings
+					} else {
+						List<String> out = new ArrayList<>();
+						for (String s : cleaned.split(",")) {
+							out.add(s.trim());	
+						}
+						cld = new ConfigLine<List<String>>(section1, out);
+					}
+					
+				// If it's not a List
+				} else {
+					// Clean the string
+					section2 = section2.trim();
+					
+					// Checks to see if the value is an Integer
+					if (StringUtils.containsInteger(cleaned)) {
+						try {
+							cld = new ConfigLine<Integer>(section1, Integer.parseInt(section2));
+						} catch (NumberFormatException e) {
+							cld = new ConfigLine<String>(section1, section2);
+						}
+						
+					// Checks to see if the value is a Double
+					} else if (StringUtils.containsDouble(cleaned)) {
+						try {
+							cld = new ConfigLine<Double>(section1, Double.parseDouble(section2));
+						} catch (NumberFormatException e) {
+							cld = new ConfigLine<String>(section1, section2);
+						}
+					
+					// Checks to see if the value is a Boolean
+					} else if (StringUtils.isBoolean(cleaned)) {
+						try {
+							cld = new ConfigLine<Boolean>(section1, Boolean.parseBoolean(section2));
+						} catch (NumberFormatException e) {
+							cld = new ConfigLine<String>(section1, section2);
+						}
+					
+					// Checks to see if the value is a Character
+					} else if (StringUtils.isCharacter(cleaned)) {
+						cld = new ConfigLine<Character>(section1, cleaned.charAt(0));
+					
+					// If nothing else, it's a String. 
+					} else {
+						cld = new ConfigLine<String>(section1, section2);
+					}
+				}
+				
+				// Add the ConfigLine to the section
 				section.add(cld);
 
 				// Read the next line
@@ -158,7 +253,7 @@ public class ConfigFile {
 		}
 		// Catches, exceptions, and debugging
 		catch (FileNotFoundException e) {
-			MessageMaker.out("File not found. Probably crashing about now.");
+			MessageMaker.out("File not found.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -170,7 +265,7 @@ public class ConfigFile {
 	 * @param name the name of the ConfigSection to find.
 	 * @return the ConfigSection matching name if found.
 	 */
-	public ConfigSection findSection(String name) {
+	public ConfigSection getSection(String name) {
 		// Cycle through the ArrayList, return ConfigSection if names are equal
 		for (ConfigSection cs : sections) {
 			if (cs.getName().equals(name)) {
@@ -190,7 +285,7 @@ public class ConfigFile {
 	public ConfigSection getSection(int index) {
 		try {
 			return this.sections.get(index);
-		} catch (ArrayIndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException e) {
 			return null;
 		}
 		
@@ -201,7 +296,7 @@ public class ConfigFile {
 	 * 
 	 * @return number of COnfigSections in this ConfigFile
 	 */
-	public int sections() {
+	public int size() {
 		return this.sections.size();
 	}
 }
