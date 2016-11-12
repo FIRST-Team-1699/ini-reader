@@ -69,7 +69,7 @@ public class ConfigSection {
 		try {
 			return new ConfigLine<>(this.lines.get(index));
 		} catch (IndexOutOfBoundsException e) {
-			return null;
+			throw new NotFoundException("Provided index was out of bounds.");
 		}
 	}
 	
@@ -85,7 +85,7 @@ public class ConfigSection {
 				return new ConfigLine<>(cl);
 			}
 		}
-		return null;
+		throw new NotFoundException("Line not found " + name + " .");
 	}
 	
 	/**

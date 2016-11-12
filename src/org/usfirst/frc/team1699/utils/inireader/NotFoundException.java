@@ -2,11 +2,12 @@
  * FIRST Team 1699
  * 
  * @author thatging3rkid, FIRST Team 1699
- * 
- *         This exception is thrown when the object you are looking for is not found.
  */
 package org.usfirst.frc.team1699.utils.inireader;
 
+/**
+ * This exception is thrown when the object you are looking for is not found.
+ */
 public class NotFoundException extends RuntimeException {
 
 	// Auto-generated Serial ID
