@@ -69,7 +69,7 @@ public class ConfigSection {
 		try {
 			return new ConfigLine<>(this.lines.get(index));
 		} catch (IndexOutOfBoundsException e) {
-			throw new NotFoundException("Provided index was out of bounds.");
+			return null;
 		}
 	}
 	
