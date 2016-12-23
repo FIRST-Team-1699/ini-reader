@@ -34,7 +34,7 @@ public class MessageMaker {
 				break;
 			} else { // Break up lines :O
 				printed = "| " + notPrinted.substring(0, printRoom) + " |";
-				notPrinted = notPrinted.substring(47, notPrinted.length());
+				notPrinted = notPrinted.substring(53, notPrinted.length());
 				System.out.println(printed);
 			}
 		}
