@@ -2,9 +2,9 @@
 
 Our .ini reader, used to read values in to the code and to read autonomous code.
 
-Archived versions of iniReader are in `2015-archive` and `2016-archive`. `master` needs to be tested before it should be used in projects.
+Archived versions of iniReader are in `2015-archive` (LabVIEW) and `2016-archive` (Java). `master` needs to be tested before it should be used in projects.
 
-See [this](https://github.com/first-team-1699/ini-reader/wiki/introduction) for usage.
+See [this](https://github.com/first-team-1699/ini-reader/wiki) for usage.
 
 # Side Note
 
