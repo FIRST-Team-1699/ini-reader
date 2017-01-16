@@ -10,10 +10,10 @@ package org.usfirst.frc.team1699.utils.inireader;
 /**
  * Stores data from a configuration file. 
  */
-public class ConfigLine<T> {
+public class ConfigLine<Type> {
 
 	private String name;
-	private T value;
+	private Type value;
 
 	/**
 	 * Creates a ConfigLine with the specified contents
@@ -21,14 +21,14 @@ public class ConfigLine<T> {
 	 * @param name the name of the value, what comes before the "="
 	 * @param value an Object that can be any value
 	 */
-	public ConfigLine(String name, T value) {
+	public ConfigLine(String name, Type value) {
 		this.name = name;
 		this.value = value;
 	}
 	
-	public ConfigLine(ConfigLine<T> line) {
+	public ConfigLine(ConfigLine<Type> line) {
 		this.name = line.getName();
-		this.value = (T) line.getRawValue();
+		this.value = (Type) line.getRawValue();
 	}
 
 	/**
@@ -45,19 +45,19 @@ public class ConfigLine<T> {
 	 * 
 	 * @return the value of the line
 	 */
-	public T getRawValue() {
+	public Type getRawValue() {
 		return value;
 	}
-	
+		
 	/**
 	 * Gets the value of the line in a safe manner. It checks the class type before returning a value.
 	 *  
-	 * @param <L> the type to check against
+	 * @param <Check_Type> the type to check against
 	 *  
 	 * @param class_type the Class of the type
 	 * @return the value of this ConfigLine or null if the types do not match
 	 */
-	public <L> T getValue(Class<L> class_type) {
+	public <Check_Type> Type getValue(Class<Check_Type> class_type) {
 		if (class_type.equals(this.value.getClass())) {
 			return this.value;
 		} else {
@@ -66,23 +66,19 @@ public class ConfigLine<T> {
 	}
 
 	/**
-	 * Creates a String that represents the line. For debugging or writing to a file.
-	 * 
-	 * @return a String that represents the line
+	 * @inheritDoc
 	 */
 	@Override
 	public String toString() {
 		if ((this.name == null) || (this.name.trim().equals(""))) {
-			return "Value: " + this.value.toString();
+			return "Line: " + this.value.toString();
 		} else {
 			return "Name: " + this.name + ", Value: " + this.value.toString();
 		}
 	}
 	
 	/**
-	 * Generates a hash code for this object, used for hashed data sets.
-	 * 
-	 * @return the hash code of this object
+	 * @inheritDoc
 	 */
 	@Override
 	public int hashCode() {
@@ -94,18 +90,14 @@ public class ConfigLine<T> {
 	}
 
 	/**
-	 * Tells if two objects are equal
-	 * 
-	 * @param obj the object to compare to 
-	 * @return true if the two objects are equal to each other
+	 * @inheritDoc
 	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ConfigLine<?>) {
 			ConfigLine<?> cl = (ConfigLine<?>) obj;
 			return this.name.equals(cl.getName()) && this.value.equals(cl.getRawValue());
-		} else {
-			return false;
 		}
+		return false;
 	}
 }

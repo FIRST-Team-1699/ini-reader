@@ -5,15 +5,15 @@
  * 
  * @author thatging3rkid, FIRST Team 1699
  *
- * @version v2.1rc1, released on 11/9/2016
+ * @version v2.1rc3, released on 1/16/2016
  */
 package org.usfirst.frc.team1699.utils.inireader;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 
@@ -23,15 +23,14 @@ import java.io.FileNotFoundException;
 public class ConfigFile {
 
 	private File file;
-	
-	private ArrayList<ConfigSection> sections = new ArrayList<>();
+	private List<ConfigSection> sections = null;
 
 	/**
 	 * Creates a basic ConfigFile with a file at /home/lvuser/1699-config.ini
 	 */
 	public ConfigFile() {
 		this.file = new File("/home/lvuser/1699-config.ini");
-		MessageMaker.out("Initalized with file: " + file.getAbsolutePath() + " (default)");
+		MessageMaker.out("Initalized with file: " + this.file.getAbsolutePath() + " (default)");
 		this.readFile();
 	}
 
@@ -42,7 +41,7 @@ public class ConfigFile {
 	 */
 	public ConfigFile(String fullPath) {
 		this.file = new File(fullPath);
-		MessageMaker.out("Initalized with file: " + file.getAbsolutePath());
+		MessageMaker.out("Initalized with file: " + this.file.getAbsolutePath());
 		this.readFile();
 	}
 
@@ -53,15 +52,33 @@ public class ConfigFile {
 	 */
 	public ConfigFile(File file) {
 		this.file = file;
-		MessageMaker.out("Initalized with file: " + file.getAbsolutePath());
+		MessageMaker.out("Initalized with file: " + this.file.getAbsolutePath());
 		this.readFile();
 	}
-
+	
+	/**
+	 * Creates a ConfigFile with the specified File, but gives the user the option to skip reading the file
+	 * 
+	 * @param file the file that will be read from
+	 * @param no_file_read if true, the file will not be read into memory until called using .readFile()
+	 */
+	public ConfigFile(File file, boolean no_file_read) {
+		this.file = file;
+		if (no_file_read) {
+			MessageMaker.out("Initalized with file: " + this.file.getAbsolutePath() + "; not reading file in constructor!");
+		} else {
+			MessageMaker.out("Initalized with file: " + this.file.getAbsolutePath());
+			this.readFile();
+		}
+		
+	}
+	
 	/**
 	 * Reads the file. Executed automatically on construction, but it can be force-reread.
 	 */
 	public void readFile() {
 		ConfigSection section = new ConfigSection("global");
+		this.sections = new ArrayList<>();
 		this.sections.add(section);
 
 		try (
@@ -133,7 +150,7 @@ public class ConfigFile {
 				
 				// Start the madness that is processing this value into a type
 				String cleaned = section2.trim();
-				ConfigLine<?> cld;
+				ConfigLine<?> cl_add;
 				
 				// Check if the value is a List
 				if (StringUtils.containsList(cleaned)) {
@@ -148,13 +165,13 @@ public class ConfigFile {
 							for (String s : cleaned.split(",")) {
 								out.add(Integer.parseInt(s.trim()));
 							}
-							cld = new ConfigLine<List<Integer>>(section1, out);
+							cl_add = new ConfigLine<List<Integer>>(section1, out);
 						} catch (NumberFormatException e ) {
 							List<String> out = new ArrayList<>();
 							for (String s : cleaned.split(",")) {
 								out.add(s.trim());	
 							}
-							cld = new ConfigLine<List<String>>(section1, out);
+							cl_add = new ConfigLine<List<String>>(section1, out);
 						}					
 					
 					// Check to see if the value contains Doubles
@@ -164,13 +181,13 @@ public class ConfigFile {
 							for (String s : cleaned.split(",")) {
 								out.add(Double.parseDouble(s.trim()));
 							}
-							cld = new ConfigLine<List<Double>>(section1, out);
+							cl_add = new ConfigLine<List<Double>>(section1, out);
 						} catch (NumberFormatException e ) {
 							List<String> out = new ArrayList<>();
 							for (String s : cleaned.split(",")) {
 								out.add(s.trim());	
 							}
-							cld = new ConfigLine<List<String>>(section1, out);
+							cl_add = new ConfigLine<List<String>>(section1, out);
 						}
 					
 					// Check to see if the value contains Booleans
@@ -180,13 +197,13 @@ public class ConfigFile {
 							for (String s : cleaned.split(",")) {
 								out.add(Boolean.parseBoolean(s.trim()));
 							}
-							cld = new ConfigLine<List<Boolean>>(section1, out);
+							cl_add = new ConfigLine<List<Boolean>>(section1, out);
 						} catch (NumberFormatException e ) {
 							List<String> out = new ArrayList<>();
 							for (String s : cleaned.split(",")) {
 								out.add(s.trim());	
 							}
-							cld = new ConfigLine<List<String>>(section1, out);
+							cl_add = new ConfigLine<List<String>>(section1, out);
 						}
 					
 					// Check to see if the value is a List of Characters
@@ -195,14 +212,14 @@ public class ConfigFile {
 						for (String s : cleaned.split(",")) {
 							out.add(s.trim().charAt(0));	
 						}
-						cld = new ConfigLine<List<Character>>(section1, out);
+						cl_add = new ConfigLine<List<Character>>(section1, out);
 					// If nothing else, it's a List of Strings
 					} else {
 						List<String> out = new ArrayList<>();
 						for (String s : cleaned.split(",")) {
 							out.add(s.trim());	
 						}
-						cld = new ConfigLine<List<String>>(section1, out);
+						cl_add = new ConfigLine<List<String>>(section1, out);
 					}
 					
 				// If it's not a List
@@ -213,39 +230,39 @@ public class ConfigFile {
 					// Checks to see if the value is an Integer
 					if (StringUtils.containsInteger(cleaned)) {
 						try {
-							cld = new ConfigLine<Integer>(section1, Integer.parseInt(section2));
+							cl_add = new ConfigLine<Integer>(section1, Integer.parseInt(section2));
 						} catch (NumberFormatException e) {
-							cld = new ConfigLine<String>(section1, section2);
+							cl_add = new ConfigLine<String>(section1, section2);
 						}
 						
 					// Checks to see if the value is a Double
 					} else if (StringUtils.containsDouble(cleaned)) {
 						try {
-							cld = new ConfigLine<Double>(section1, Double.parseDouble(section2));
+							cl_add = new ConfigLine<Double>(section1, Double.parseDouble(section2));
 						} catch (NumberFormatException e) {
-							cld = new ConfigLine<String>(section1, section2);
+							cl_add = new ConfigLine<String>(section1, section2);
 						}
 					
 					// Checks to see if the value is a Boolean
 					} else if (StringUtils.isBoolean(cleaned)) {
 						try {
-							cld = new ConfigLine<Boolean>(section1, Boolean.parseBoolean(section2));
+							cl_add = new ConfigLine<Boolean>(section1, Boolean.parseBoolean(section2));
 						} catch (NumberFormatException e) {
-							cld = new ConfigLine<String>(section1, section2);
+							cl_add = new ConfigLine<String>(section1, section2);
 						}
 					
 					// Checks to see if the value is a Character
 					} else if (StringUtils.isCharacter(cleaned)) {
-						cld = new ConfigLine<Character>(section1, cleaned.charAt(0));
+						cl_add = new ConfigLine<Character>(section1, cleaned.charAt(0));
 					
 					// If nothing else, it's a String. 
 					} else {
-						cld = new ConfigLine<String>(section1, section2);
+						cl_add = new ConfigLine<String>(section1, section2);
 					}
 				}
 				
 				// Add the ConfigLine to the section
-				section.add(cld);
+				section.add(cl_add);
 
 				// Read the next line
 				line = reader.readLine();
@@ -258,6 +275,15 @@ public class ConfigFile {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Gets the file of the ConfigFile
+	 * 
+	 * @return the file with this ConfigFile
+	 */
+	public File getFile() {
+		return this.file;
+	}
 
 	/**
 	 * Gets the specified ConfigSection if it exists. If not, then throw an exception.
@@ -266,6 +292,9 @@ public class ConfigFile {
 	 * @return the ConfigSection matching name if found.
 	 */
 	public ConfigSection getSection(String name) {
+		if (this.sections == null) {
+			throw new NullPointerException("ConfigFile's section List is null, did you read the file?");
+		}
 		// Cycle through the ArrayList, return ConfigSection if names are equal
 		for (ConfigSection cs : sections) {
 			if (cs.getName().equals(name)) {
@@ -283,6 +312,9 @@ public class ConfigFile {
 	 * @return the ConfigSection at that index if it exists, else null
 	 */
 	public ConfigSection getSection(int index) {
+		if (this.sections == null) {
+			throw new NullPointerException("ConfigFile's section List is null, did you read the file?");
+		}
 		try {
 			return this.sections.get(index);
 		} catch (IndexOutOfBoundsException e) {
@@ -292,11 +324,67 @@ public class ConfigFile {
 	}
 	
 	/**
+	 * Gets the contents of this ConfigFile
+	 * 
+	 * @return an ArrayList of ConfigSections that make up this ConfigFile
+	 */
+	public List<ConfigSection> getSections() {
+		if (this.sections == null) {
+			return null;
+		}
+		List<ConfigSection> out = new ArrayList<>();
+		for (ConfigSection cs : this.sections) {
+			out.add(new ConfigSection(cs));
+		}
+		return out;
+		
+	}
+	
+	/**
+	 * Gets the value of the line without having to use two dot operators! Super cool!
+	 * 
+	 * @param section_name the name of the section to look at
+	 * @param line_name the name of the line to look for
+	 * @param class_type a reference to the class (for safety)
+	 * @return the value of the line in the specified section with the specified name
+	 */
+	public <Check_Type> Check_Type getLineValue(String section_name, String line_name, Class<Check_Type> class_type) {
+		return this.getSection(section_name).getLineValue(line_name, class_type);
+	}
+	
+	/**
 	 * Returns the number of ConfigSections that are in this ConfigFile.
 	 * 
 	 * @return number of COnfigSections in this ConfigFile
 	 */
 	public int size() {
+		if (this.sections == null) {
+			throw new NullPointerException("ConfigFile's section List is null, did you read the file?");
+		}
 		return this.sections.size();
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	@Override
+	public String toString() {
+		String output = "ConfigFile at: " + this.file.getAbsolutePath() + "\n";
+		for(ConfigSection cs : this.sections) {
+			output += cs.toString();
+		}
+		return output;
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ConfigFile) {
+			ConfigFile cf_test = (ConfigFile) obj;
+			return (cf_test.getSections().equals(this.sections) && cf_test.getFile().equals(this.file));
+		}
+		return false;
 	}
 }

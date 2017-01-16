@@ -16,7 +16,6 @@ import java.util.ArrayList;
 public class ConfigSection {
 
 	private String name;
-
 	private ArrayList<ConfigLine<?>> lines = new ArrayList<>();
 
 	/**
@@ -26,6 +25,14 @@ public class ConfigSection {
 	 */
 	public ConfigSection(String name) {
 		this.name = name;
+	}
+	
+	/**
+	 * Creates a copy of the given ConfigSection
+	 */
+	public ConfigSection(ConfigSection section) {
+		this.name = section.getName();
+		this.lines = (ArrayList<ConfigLine<?>>) section.getLines();
 	}
 
 	/**
@@ -49,13 +56,13 @@ public class ConfigSection {
 	/**
 	 * Create a ConfigLine and add it to the ConfigSection
 	 * 
-	 * @param <T> the type of the new ConfigLine
+	 * @param <Type> the type of the new ConfigLine
 	 * 
 	 * @param name  the name for the ConfigLine to be added
 	 * @param value  the value for the ConfigLine to be added
 	 */
-	public <T> void add(String name, T value) {
-		ConfigLine<T> line = new ConfigLine<T>(name, value);
+	public <Type> void add(String name, Type value) {
+		ConfigLine<Type> line = new ConfigLine<Type>(name, value);
 		this.add(line);
 	}
 
@@ -85,7 +92,7 @@ public class ConfigSection {
 				return new ConfigLine<>(cl);
 			}
 		}
-		throw new NotFoundException("Line not found " + name + " .");
+		throw new NotFoundException("Line not found " + name + ".");
 	}
 	
 	/**
@@ -96,34 +103,32 @@ public class ConfigSection {
 	public List<ConfigLine<?>> getLines() {
 		if (this.lines == null) {
 			return null;
-		} else {
-			ArrayList<ConfigLine<?>> output = new ArrayList<>();
-			for (ConfigLine<?> cl : this.lines) {
-				ConfigLine<?> cla = new ConfigLine<>(cl);
-				output.add(cla);
-			}
-			return output;
 		}
+		ArrayList<ConfigLine<?>> output = new ArrayList<>();
+		for (ConfigLine<?> cl : this.lines) {
+			output.add(new ConfigLine<>(cl));
+		}
+		return output;
 	}
+	
 	
 	/**
 	 * Gets the value of a ConfigLine without using a dot operator! Cool!
 	 * 
-	 * @param <L> the type to check against
+	 * @param <Check_Type> the type to check against
 	 * 
 	 * @param name the name of the ConfigLine to look for
 	 * @param class_type the Class of the type
 	 * @return the the value of this ConfigLine or null if the types do not match
 	 */
 	@SuppressWarnings("unchecked") // it is checked so...
-	public <L> L getLineValue(String name, Class<L> class_type) {
+	public <Check_Type> Check_Type getLineValue(String name, Class<Check_Type> class_type) {
 		ConfigLine<?> out = this.getLine(name);
 		if (out.getRawValue().getClass().equals(class_type)) {
-			return (L) out.getRawValue(); 
+			return (Check_Type) out.getRawValue(); 
 		} 
 		return null;
 	}
-	
 	
 	/**
 	 * Get the contents of this ConfigSection as a List of Strings. 
@@ -136,11 +141,7 @@ public class ConfigSection {
 		} else {
 			ArrayList<String> output = new ArrayList<>();
 			for (ConfigLine<?> cl : this.lines) {
-				try {
-					output.add((String) cl.getRawValue());
-				} catch (ClassCastException e) {
-					System.err.println("Error casting on line: " + cl.toString());
-				}
+				output.add(cl.getRawValue().toString());
 			}
 			return output;
 		}
@@ -156,20 +157,44 @@ public class ConfigSection {
 	}
 	
 	/**
-	 * Generates a String representing this ConfigSection
-	 * 
-	 * @return a String representing this ConfigSection 
+	 * @inheritDoc 
 	 */
 	@Override
 	public String toString() {
 		String output = "";
 		output = output + "Section: " + this.name + "\n";
 		for (ConfigLine<?> cl : lines) {
-			output = output + cl.toString() + "\n";
+			output += cl.toString() + "\n";
 		}
 		if (output.charAt(output.length() - 1) == '\n') {
 			output = output.substring(0, output.length() - 1);
 		}
 		return output;
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((lines == null) ? 0 : lines.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ConfigSection) {
+			ConfigSection cs_test = (ConfigSection) obj;
+			return (cs_test.getLines().equals(this.lines) && cs_test.getName().equals(this.name));
+		}
+		return false;
+	}
+	
+	
 }
