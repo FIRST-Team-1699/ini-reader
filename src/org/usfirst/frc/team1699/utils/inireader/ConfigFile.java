@@ -81,9 +81,7 @@ public class ConfigFile {
 		this.sections = new ArrayList<>();
 		this.sections.add(section);
 
-		try (
-				BufferedReader reader = new BufferedReader(new FileReader(file));
-			) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 			String line = reader.readLine();
 			while (line != null) {
 				// Checks for blank line
