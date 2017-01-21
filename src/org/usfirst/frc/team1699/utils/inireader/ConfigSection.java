@@ -68,30 +68,17 @@ public class ConfigSection {
 		ConfigLine<Type> line = new ConfigLine<Type>(name, value);
 		this.add(line);
 	}
-
-	/**
-	 * Gets the ConfigLine at a specified point. Useful for autonomous. Returns null if the index is out of bounds.
-	 * 
-	 * @param index index in the ArrayList to return
-	 * @return the ConfigFile at the specified index, null if it does not exist
-	 */
-	public ConfigLine<?> getLine(int index) {
-		try {
-			return new ConfigLine<>(this.lines.get(index));
-		} catch (IndexOutOfBoundsException e) {
-			return null;
-		}
-	}
 	
 	/**
 	 * Get a ConfigLine based on the provided name. Returns the first ConfigLine with that name.
 	 * 
 	 * @param name the name of the ConfigLine to look for
 	 * @return the ConfigLine that matches the specified name, null if it does not exist
+	 * @throws NotFoundException if the given name is not found
 	 */
-	public ConfigLine<?> getLine(String name) {
+	public ConfigLine<?> getLine(String name) throws NotFoundException {
 		for (ConfigLine<?> cl : lines) {
-			if (cl.getName().equals(name)) {
+			if (cl.getName().trim().equals(name.trim())) {
 				return new ConfigLine<>(cl);
 			}
 		}
@@ -123,9 +110,10 @@ public class ConfigSection {
 	 * @param name the name of the ConfigLine to look for
 	 * @param class_type the Class of the type
 	 * @return the the value of this ConfigLine or null if the types do not match
+	 * @throws NotFoundException if the given name is not found
 	 */
 	@SuppressWarnings("unchecked") // it is checked so...
-	public <Check_Type> Check_Type getLineValue(String name, Class<Check_Type> class_type) {
+	public <Check_Type> Check_Type getLineValue(String name, Class<Check_Type> class_type) throws NotFoundException {
 		ConfigLine<?> out = this.getLine(name);
 		if (out.getRawValue().getClass().equals(class_type)) {
 			return (Check_Type) out.getRawValue(); 
@@ -183,9 +171,9 @@ public class ConfigSection {
 		for (ConfigLine<?> cl : lines) {
 			output += cl.toString() + "\n";
 		}
-		if (output.charAt(output.length() - 1) == '\n') {
+		/*if (output.charAt(output.length() - 1) == '\n') {
 			output = output.substring(0, output.length() - 1);
-		}
+		}*/
 		return output;
 	}
 

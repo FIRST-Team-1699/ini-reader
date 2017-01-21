@@ -8,7 +8,7 @@ package org.usfirst.frc.team1699.utils.inireader.exception;
 /**
  * This exception is thrown when the object you are looking for is not found.
  */
-public class NotFoundException extends RuntimeException {
+public class NotFoundException extends Exception {
 
 	// Auto-generated Serial ID
 	private static final long serialVersionUID = 2272833937598728478L;

@@ -4,7 +4,9 @@ Our configuration reader, used to read values in to the code and to read autonom
 
 Archived versions of ini-reader are in `2015-archive` (LabVIEW) and `2016-archive` (Java) branches.
 
-See [this](https://github.com/first-team-1699/ini-reader/wiki) for usage.
+~~See [this](https://github.com/first-team-1699/ini-reader/wiki) for usage.~~ The wiki has been depreciated for v2.2+.
+
+**NOTE: `master` CONTAINS EXPERIMENTAL CODE, DO NOT USE. USE A RELEASE VERSION**
 
 # Side Note
 
