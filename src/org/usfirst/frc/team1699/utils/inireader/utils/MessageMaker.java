@@ -7,13 +7,13 @@
  * 
  *         A full rewrite is coming...
  */
-package org.usfirst.frc.team1699.utils.inireader;
+package org.usfirst.frc.team1699.utils.inireader.utils;
 
 import java.io.PrintStream;
 
 public class MessageMaker {
 
-	static void out(String output) {
+	public static void out(String output) {
 		// Time to make sure people can make sense of this after I leave...
 		System.out.println("|-------------------------------------------------------|");
 		System.out.println("| Team 1699 ini-reader                                  |");
@@ -45,7 +45,7 @@ public class MessageMaker {
 		System.out.println("|-------------------------------------------------------|");
 	}
 	
-	static void out(String output, PrintStream out) {
+	public static void out(String output, PrintStream out) {
 		// Time to make sure people can make sense of this after I leave...
 		out.println("|-------------------------------------------------------|");
 		out.println("| Team 1699 ini-reader                                  |");

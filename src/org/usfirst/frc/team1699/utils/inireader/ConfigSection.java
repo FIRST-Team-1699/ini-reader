@@ -8,6 +8,9 @@
 package org.usfirst.frc.team1699.utils.inireader;
 
 import java.util.List;
+
+import org.usfirst.frc.team1699.utils.inireader.exception.NotFoundException;
+
 import java.util.ArrayList;
 
 /**
@@ -154,6 +157,20 @@ public class ConfigSection {
 	 */
 	public int size() {
 		return this.lines.size();
+	}
+	
+	/**
+	 * Attempts to generate the code that made this ConfigSection.
+	 * 
+	 * @return a String with the code that made this ConfigSection
+	 */
+	public String generateCode() {
+		String output = "";
+		output += "[" + this.name + "]\n";
+		for (ConfigLine<?> cl : this.lines) {
+			output += cl.generateCode();
+		}
+		return output;
 	}
 	
 	/**

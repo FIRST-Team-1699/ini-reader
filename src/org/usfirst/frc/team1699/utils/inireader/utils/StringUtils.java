@@ -5,7 +5,7 @@
  * 
  * @author thatging3rkid, FIRST Team 1699
  */
-package org.usfirst.frc.team1699.utils.inireader;
+package org.usfirst.frc.team1699.utils.inireader.utils;
 
 /**
  * A class filled with static methods that are used for processing String

@@ -11,6 +11,11 @@ package org.usfirst.frc.team1699.utils.inireader;
 
 import java.io.File;
 import java.util.List;
+
+import org.usfirst.frc.team1699.utils.inireader.exception.NotFoundException;
+import org.usfirst.frc.team1699.utils.inireader.utils.MessageMaker;
+import org.usfirst.frc.team1699.utils.inireader.utils.StringUtils;
+
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.io.IOException;
@@ -54,23 +59,6 @@ public class ConfigFile {
 		this.file = file;
 		MessageMaker.out("Initalized with file: " + this.file.getAbsolutePath());
 		this.readFile();
-	}
-	
-	/**
-	 * Creates a ConfigFile with the specified File, but gives the user the option to skip reading the file
-	 * 
-	 * @param file the file that will be read from
-	 * @param no_file_read if true, the file will not be read into memory until called using .readFile()
-	 */
-	public ConfigFile(File file, boolean no_file_read) {
-		this.file = file;
-		if (no_file_read) {
-			MessageMaker.out("Initalized with file: " + this.file.getAbsolutePath() + "; not reading file in constructor!");
-		} else {
-			MessageMaker.out("Initalized with file: " + this.file.getAbsolutePath());
-			this.readFile();
-		}
-		
 	}
 	
 	/**
@@ -290,9 +278,6 @@ public class ConfigFile {
 	 * @return the ConfigSection matching name if found.
 	 */
 	public ConfigSection getSection(String name) {
-		if (this.sections == null) {
-			throw new NullPointerException("ConfigFile's section List is null, did you read the file?");
-		}
 		// Cycle through the ArrayList, return ConfigSection if names are equal
 		for (ConfigSection cs : sections) {
 			if (cs.getName().equals(name)) {
@@ -310,9 +295,6 @@ public class ConfigFile {
 	 * @return the ConfigSection at that index if it exists, else null
 	 */
 	public ConfigSection getSection(int index) {
-		if (this.sections == null) {
-			throw new NullPointerException("ConfigFile's section List is null, did you read the file?");
-		}
 		try {
 			return this.sections.get(index);
 		} catch (IndexOutOfBoundsException e) {
@@ -327,9 +309,6 @@ public class ConfigFile {
 	 * @return an ArrayList of ConfigSections that make up this ConfigFile
 	 */
 	public List<ConfigSection> getSections() {
-		if (this.sections == null) {
-			return null;
-		}
 		List<ConfigSection> out = new ArrayList<>();
 		for (ConfigSection cs : this.sections) {
 			out.add(new ConfigSection(cs));
@@ -356,9 +335,6 @@ public class ConfigFile {
 	 * @return number of COnfigSections in this ConfigFile
 	 */
 	public int size() {
-		if (this.sections == null) {
-			throw new NullPointerException("ConfigFile's section List is null, did you read the file?");
-		}
 		return this.sections.size();
 	}
 	

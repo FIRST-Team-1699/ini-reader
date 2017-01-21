@@ -64,6 +64,20 @@ public class ConfigLine<Type> {
 			return null;
 		}
 	}
+	
+	/**
+	 * Attempts to generate the code that made this ConfigLine.
+	 * 
+	 * @return a String with the code that made this ConfigLine
+	 */
+	public String generateCode() {
+		// when object reading is implemented, generateCode needs to return the serialized object
+		if (this.name == null || this.name.trim().equals("")) {
+			return this.value.toString() + "\n";
+		} else {
+			return this.name + " = " +this.value.toString() + "\n";
+		}
+	}
 
 	/**
 	 * @inheritDoc

@@ -3,7 +3,7 @@
  * 
  * @author thatging3rkid, FIRST Team 1699
  */
-package org.usfirst.frc.team1699.utils.inireader;
+package org.usfirst.frc.team1699.utils.inireader.exception;
 
 /**
  * This exception is thrown when the object you are looking for is not found.
