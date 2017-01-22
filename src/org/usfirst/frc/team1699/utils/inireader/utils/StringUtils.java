@@ -103,5 +103,10 @@ public class StringUtils {
 	public static boolean containsList(String test) {
 		String test1 = test.trim();
 		return ((test1.charAt(0) == '{') && (test1.charAt(test.length() - 1) == '}'));
-	}	
+	}
+	
+	
+	public static boolean isSerializedObejct(String test) {
+		return (test.length() > 1) && (test.trim().substring(0, 2).toLowerCase().equals("o*"));
+	}
 }

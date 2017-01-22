@@ -1,6 +1,10 @@
 /**
  * FIRST Team 1699
  * 
+ * This exception is used to tell the user that their item was not found.
+ * 
+ * This is a checked exception, so the user should provide a backup to be used when this exception is thrown.
+ * 
  * @author thatging3rkid, FIRST Team 1699
  */
 package org.usfirst.frc.team1699.utils.inireader.exception;
@@ -25,13 +29,4 @@ public class NotFoundException extends Exception {
 	public NotFoundException(Throwable arg0) {
 		super(arg0);
 	}
-
-	public NotFoundException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-	}
-
-	public NotFoundException(String arg0, Throwable arg1, boolean arg2, boolean arg3) {
-		super(arg0, arg1, arg2, arg3);
-	}
-
 }

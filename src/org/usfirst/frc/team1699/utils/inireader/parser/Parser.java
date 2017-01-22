@@ -25,12 +25,13 @@ public class Parser {
 	static {
 		// Makes a map of the possible keywords
 		keywords = new HashMap<>();
-		keywords.put("", KeywordFunction.EMPTY);
+		keywords.put("",  KeywordFunction.EMPTY);
+		keywords.put(" ", KeywordFunction.EMPTY);
 		keywords.put("#", KeywordFunction.COMMENT);
 		keywords.put(";", KeywordFunction.COMMENT);
 		keywords.put("[", KeywordFunction.SECTION);
-		
-		// might be added on to later 
+		keywords.put("%", KeywordFunction.EDITABLE);
+		// new first character keywords can be added here
 	}
 	
 	private String contents;
@@ -50,13 +51,13 @@ public class Parser {
 	 * Parses the String from the constructor
 	 */
 	public void parse() {
+		String section_name = "global"; // starts off with a global section
+		boolean section_editable = false;
+		List<RawLine> stack_lines = new ArrayList<>();
 		
 		KeywordFunction k_line;
-		String section_contents = "";
 		
-		
-		for (String line : this.contents.split("\n")) {
-			
+		for (String line : this.contents.split("\n")) {	
 			// Remove whitespace at the beginning and end before processing
 			line = line.trim();
 			
@@ -74,42 +75,77 @@ public class Parser {
 				
 				// Case for when the line is empty
 				case EMPTY:
+					// Skip the line.
 					continue;
 					
 				// Case for when the line is a comment
 				case COMMENT:
+					// Skip the line.
+					// At some point, if comment reconstruction needs to be done, then this is here.
 					continue;
+				
+				// Case for when the line is editable
+				case EDITABLE:
+					// If this is an editable section
+					if (keywords.get(line.substring(1, 2)) == KeywordFunction.SECTION) {
+						// If the stack of lines is 0, then skip the section header
+						if (stack_lines.size() == 0) {
+							continue;
+						} else {
+							// If not, then add this RawSection to the completed RawSections
+							this.r_sections.add(new RawSection(section_name, stack_lines, section_editable));
+						}
+						
+						// Start off the next section with it's name, and strip off all the )
+						section_name = line.replace('[', ' ');
+						section_name = section_name.replace(']', ' ');
+						section_name = section_name.replace('%', ' ');
+						section_name = section_name.trim();
+						
+						// Reset the lines in the section and set the next section as editable
+						stack_lines = new ArrayList<>(); 
+						section_editable = true;
+					// If not, this must be an editable line
+					} else {
+						// Add the new line with the header removed
+						stack_lines.add(new RawLine(line.substring(1), true));
+					}
+					break;
+					
 					
 				// Case for when the line is a section
 				case SECTION:
-					// Make a global section if required
-					if (this.r_sections.size() == 0) {
-						section_contents = "[global]\n" + section_contents;
+					// If the stack of lines is 0, then skip the section header
+					if (stack_lines.size() == 0) {
+						continue;
+					} else { 
+						// If not, then add this RawSection to the completed RawSections
+						this.r_sections.add(new RawSection(section_name, stack_lines, section_editable));
 					}
-					
-					// Add the previously processed lines to the previous RawSection 
-					this.r_sections.add(new RawSection(section_contents.trim()));
 					// Start off the next section with it's header (aka line)
-					section_contents = line + "\n";
+					section_name = line.replace('[', ' ');
+					section_name = section_name.replace(']', ' ');
+					section_name = section_name.trim();
+					
+					// Reset the lines in the section
+					stack_lines = new ArrayList<>();
+					// An editable section will never be in here, it will be in the editable case
+					// With that in mind, we know that this section is not editable.
+					section_editable = false;
 					break;
-				
+					
 				// Default case
 				default:
-					section_contents += line + "\n";
+					stack_lines.add(new RawLine(line));
 					break;				
 				}
 			// Just a case for normal lines :/
 			} else {
-				section_contents += line + "\n";
+				stack_lines.add(new RawLine(line));
 			}
 		}
-		// Just in case you have no sections
-		if (this.r_sections.size() == 0) {
-			section_contents = "[global]\n" + section_contents;
-		}
-		// End of the line, add what's left to a section
-		this.r_sections.add(new RawSection(section_contents.trim()));
-		
+		// Add the lines at the end of a file that don't have a section below them
+		this.r_sections.add(new RawSection(section_name, stack_lines, section_editable));	
 	}
 	
 	/**
