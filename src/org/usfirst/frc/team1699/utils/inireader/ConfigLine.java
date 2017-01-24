@@ -7,6 +7,7 @@
  */
 package org.usfirst.frc.team1699.utils.inireader;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +16,10 @@ import org.usfirst.frc.team1699.utils.inireader.utils.ConfigLineUtils;
 /**
  * Stores data from a configuration file. 
  */
-public class ConfigLine<Type> {
+public class ConfigLine<Type> implements Serializable {
 
+	private static final long serialVersionUID = 5725320786176551336L;
+	
 	private String name;
 	private Type value;
 	
@@ -125,7 +128,7 @@ public class ConfigLine<Type> {
 		
 		// If this ConfigLine is in Object mode
 		if (this.object_mode) {
-			return if_editable + ConfigLineUtils.makeObjectLine(this.name, this.value, this.editable).generateCode();
+			return if_editable + ConfigLineUtils.makeSerializedObject(this.name, this.value, this.editable).generateCode();
 		}
 		
 		// If something is a List or ArrayList, then it needs to be changed to use '{' and '}' over '[' and ']'
@@ -151,7 +154,9 @@ public class ConfigLine<Type> {
 	 */
 	@Override
 	public String toString() {
-		if ((this.name == null) || (this.name.trim().equals(""))) {
+		if (this.value == null) {
+			return null;
+		} else if ((this.name == null) || (this.name.trim().equals(""))) {
 			return "Line: " + this.value.toString();
 		} else {
 			return "Name: " + this.name + ", Value: " + this.value.toString();

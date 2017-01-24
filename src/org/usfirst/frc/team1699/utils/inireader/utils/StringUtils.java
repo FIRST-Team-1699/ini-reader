@@ -105,8 +105,35 @@ public class StringUtils {
 		return ((test1.charAt(0) == '{') && (test1.charAt(test.length() - 1) == '}'));
 	}
 	
+	/**
+	 * The text used to notify the parser that the following text is a serialized object
+	 */
+	public static String ObjectHeader = "o*";
 	
+	/**
+	 * Tests if the String is a Serialized Object
+	 * 
+	 * @param test the String to test
+	 * @return true if the String is a Serialized Object
+	 */
 	public static boolean isSerializedObejct(String test) {
 		return (test.length() > 1) && (test.trim().substring(0, 2).toLowerCase().equals("o*"));
 	}
+	
+	/**
+	 * The text used to notify the parser that the following text is a file location
+	 */
+	public static String FilePointerHeader = "f*";
+	
+	/**
+	 * Tests if the String is a File pointer
+	 * 
+	 * @param test the String to test
+	 * @return true if the String is a File pointer
+	 */
+	public static boolean isFilePointer(String test) {
+		return (test.length() > 1) && (test.trim().substring(0, 2).toLowerCase().equals("f*"));
+	}
+	
+	
 }

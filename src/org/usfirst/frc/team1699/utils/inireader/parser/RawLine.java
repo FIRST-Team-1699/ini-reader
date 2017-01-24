@@ -7,9 +7,7 @@
  */
 package org.usfirst.frc.team1699.utils.inireader.parser;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.File;
 
 import org.usfirst.frc.team1699.utils.inireader.ConfigLine;
 import org.usfirst.frc.team1699.utils.inireader.utils.ConfigLineUtils;
@@ -21,32 +19,37 @@ import org.usfirst.frc.team1699.utils.inireader.utils.StringUtils;
 public class RawLine {
 	
 	private String line;
+	private File config_location;
 	private boolean editable = false;
 	
 	/**
 	 * Creates a place to store and process a line in a configuration file
 	 * 
 	 * @param line a line from a configuration file before processing
+	 * @param editable if the ConfigLine should be editable
 	 */
-	public RawLine(String line) {
+	public RawLine(String line, File config_location) {
 		this.line = line;
 		if (!line.endsWith("\n")) {
 			line += "\n";
 		}
+		this.editable = false;
+		this.config_location = config_location;
 	}
 	
 	/**
 	 * Creates a place to store and process a line in a configuration file
-	 * 
-	 * @param contents a line from a configuration file before processing
+	 * @param line a line from a configuration file before processing
 	 * @param editable if the ConfigLine should be editable
+	 * @param config_location the file from the ConfigFile (used for dynamic file locations)
 	 */
-	public RawLine(String line, boolean editable) {
+	public RawLine(String line, boolean editable, File config_location) {
 		this.line = line;
 		if (!line.endsWith("\n")) {
 			line += "\n";
 		}
 		this.editable = editable;
+		this.config_location = config_location;
 	}
 	
 	/**
@@ -84,23 +87,9 @@ public class RawLine {
 		
 		// Check for object mode
 		if (StringUtils.isSerializedObejct(section2)) {
-			// removes the "o*" header (and removes custom encoding)
-			String ser_object = section2.substring(2).replace(ConfigLineUtils.EncodedNewline, "\n");
-			try {
-				// Reads in the object as an object, then returns it as a ConfigLine<Object>
-				// The compiler will automatically figure out the type, so no conversion is required.
-				byte[] ba = ser_object.getBytes(ConfigLineUtils.ObjectEncoding);
-				ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(ba));
-				return new ConfigLine<Object>(section1, ois.readObject(), this.editable, true);
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-			// Error out
-			System.err.println("Error reading in object with name " + section1);
-			return new ConfigLine<Object>(section1, null);
-		
+			return ConfigLineUtils.readSerializedObject(section1, section2, this.editable);
+		} else if (StringUtils.isFilePointer(section2)) {
+			return ConfigLineUtils.readFromFile(section1, section2, this.editable, this.config_location);
 		// Check if the value is a List
 		} else if (StringUtils.containsList(section2)) {			
 			// Clean the sting and remove the brackets

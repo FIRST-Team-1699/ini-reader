@@ -7,6 +7,7 @@
  */
 package org.usfirst.frc.team1699.utils.inireader.parser;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,15 +37,17 @@ public class Parser {
 	
 	private String contents;
 	private List<RawSection> r_sections;
+	private File config_location = null;
 	
 	/**
 	 * Make a ConfigFile Parser
 	 * 
 	 * @param contents the contents of a file
 	 */
-	public Parser(String contents) {
+	public Parser(String contents, File config_location) {
 		this.contents = contents;
-		r_sections = new ArrayList<>();
+		this.r_sections = new ArrayList<>();
+		this.config_location = config_location;
 	}
 	
 	/**
@@ -88,13 +91,11 @@ public class Parser {
 				case EDITABLE:
 					// If this is an editable section
 					if (keywords.get(line.substring(1, 2)) == KeywordFunction.SECTION) {
-						// If the stack of lines is 0, then skip the section header
-						if (stack_lines.size() == 0) {
-							continue;
-						} else {
-							// If not, then add this RawSection to the completed RawSections
-							this.r_sections.add(new RawSection(section_name, stack_lines, section_editable));
-						}
+						
+						// removed check for stack_lines size
+						
+						// Add this RawSection to the completed RawSections
+						this.r_sections.add(new RawSection(section_name, stack_lines, section_editable));
 						
 						// Start off the next section with it's name, and strip off all the )
 						section_name = line.replace('[', ' ');
@@ -108,20 +109,18 @@ public class Parser {
 					// If not, this must be an editable line
 					} else {
 						// Add the new line with the header removed
-						stack_lines.add(new RawLine(line.substring(1), true));
+						stack_lines.add(new RawLine(line.substring(1), true, this.config_location));
 					}
 					break;
 					
 					
 				// Case for when the line is a section
 				case SECTION:
-					// If the stack of lines is 0, then skip the section header
-					if (stack_lines.size() == 0) {
-						continue;
-					} else { 
-						// If not, then add this RawSection to the completed RawSections
-						this.r_sections.add(new RawSection(section_name, stack_lines, section_editable));
-					}
+					// removed check for stack_lines size
+					
+					// Add this RawSection to the completed RawSections
+					this.r_sections.add(new RawSection(section_name, stack_lines, section_editable));
+					
 					// Start off the next section with it's header (aka line)
 					section_name = line.replace('[', ' ');
 					section_name = section_name.replace(']', ' ');
@@ -136,12 +135,12 @@ public class Parser {
 					
 				// Default case
 				default:
-					stack_lines.add(new RawLine(line));
+					stack_lines.add(new RawLine(line, false, this.config_location));
 					break;				
 				}
 			// Just a case for normal lines :/
 			} else {
-				stack_lines.add(new RawLine(line));
+				stack_lines.add(new RawLine(line, this.config_location));
 			}
 		}
 		// Add the lines at the end of a file that don't have a section below them

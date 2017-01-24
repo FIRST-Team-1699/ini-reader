@@ -7,6 +7,7 @@
  */
 package org.usfirst.frc.team1699.utils.inireader;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +18,10 @@ import org.usfirst.frc.team1699.utils.inireader.exception.NotFoundException;
  * Represents a section of a configuration file. 
  * It stores multiple ConfigLine objects and has methods to access and process them. 
  */
-public class ConfigSection {
+public class ConfigSection implements Serializable {
 
+	private static final long serialVersionUID = -5690561791468993953L;
+	
 	private String name;
 	private List<ConfigLine<?>> lines;
 	
