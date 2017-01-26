@@ -32,7 +32,7 @@ public class Parser {
 		keywords.put(";", KeywordFunction.COMMENT);
 		keywords.put("[", KeywordFunction.SECTION);
 		keywords.put("%", KeywordFunction.EDITABLE);
-		// new first character keywords can be added here
+		keywords.put(":", KeywordFunction.PREPROCESSED);
 	}
 	
 	private String contents;
@@ -87,13 +87,15 @@ public class Parser {
 					// At some point, if comment reconstruction needs to be done, then this is here.
 					continue;
 				
+				// Case for when the line is a preprocessor/editor line
+				case PREPROCESSED:
+					// Skip the line
+					continue;
+				
 				// Case for when the line is editable
 				case EDITABLE:
 					// If this is an editable section
 					if (keywords.get(line.substring(1, 2)) == KeywordFunction.SECTION) {
-						
-						// removed check for stack_lines size
-						
 						// Add this RawSection to the completed RawSections
 						this.r_sections.add(new RawSection(section_name, stack_lines, section_editable));
 						
@@ -116,8 +118,6 @@ public class Parser {
 					
 				// Case for when the line is a section
 				case SECTION:
-					// removed check for stack_lines size
-					
 					// Add this RawSection to the completed RawSections
 					this.r_sections.add(new RawSection(section_name, stack_lines, section_editable));
 					

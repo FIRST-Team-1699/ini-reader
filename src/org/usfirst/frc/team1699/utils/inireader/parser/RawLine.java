@@ -88,8 +88,9 @@ public class RawLine {
 		// Check for object mode
 		if (StringUtils.isSerializedObejct(section2)) {
 			return ConfigLineUtils.readSerializedObject(section1, section2, this.editable);
+		// Check for file mode
 		} else if (StringUtils.isFilePointer(section2)) {
-			return ConfigLineUtils.readFromFile(section1, section2, this.editable, this.config_location);
+			return ConfigLineUtils.readFileHeader(section1, section2, this.editable, this.config_location);
 		// Check if the value is a List
 		} else if (StringUtils.containsList(section2)) {			
 			// Clean the sting and remove the brackets

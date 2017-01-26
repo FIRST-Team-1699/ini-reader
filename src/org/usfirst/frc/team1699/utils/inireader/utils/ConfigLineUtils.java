@@ -3,15 +3,16 @@ package org.usfirst.frc.team1699.utils.inireader.utils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.usfirst.frc.team1699.utils.inireader.ConfigFile;
 import org.usfirst.frc.team1699.utils.inireader.ConfigLine;
 
 public class ConfigLineUtils {
@@ -29,7 +30,7 @@ public class ConfigLineUtils {
 	/**
 	 * What object in external files are encoded in
 	 */
-	public static String ExternalObjectEncoding = "UTF-16";
+	public static String ExternalObjectEncoding = "UTF-8";
 	
 	/**
 	 * Identifier for a static location, ie. /home/lvuser/obj-data.test.dat
@@ -206,11 +207,11 @@ public class ConfigLineUtils {
 	 * @return a ConfigLine that contains a serialized object
 	 */
 	public static ConfigLine<String> makeSerializedObject(String name, Object obj, boolean editable) {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		ObjectOutputStream oos;
 		String serialized_obj = "";
 		try {
-			oos = new ObjectOutputStream(bos);
+			// Write the object to a byte array stream, which can then be converted into a String
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(bos);
 			oos.writeObject(obj);
 			oos.flush();
 			serialized_obj = bos.toString(ConfigLineUtils.InLineObjectEncoding);
@@ -258,8 +259,7 @@ public class ConfigLineUtils {
 	 * @param config_location the location of the ConfigFile, used for dynamic locations
 	 * @return a ConfigLine made from the read-in serialized object
 	 */
-	public static ConfigLine<Object> readSerializedObjectFromFile(String name, String pointer, 
-			boolean editable, File config_location) {
+	public static ConfigLine<Object> readFileHeader(String name, String pointer, boolean editable, File config_location) {
 		// Removes the file header
 		pointer = pointer.replace(StringUtils.FilePointerHeader, " ");
 		pointer = pointer.trim();
@@ -281,7 +281,7 @@ public class ConfigLineUtils {
 		
 		// Read the file from the disk, specify the encoding, then read the object from that data
 		try {
-			String stuff = new String(Files.readAllBytes(Paths.get(location.getAbsolutePath())));
+			String stuff = new String(Files.readAllBytes(location.toPath()));
 			byte[] ba = stuff.getBytes(ConfigLineUtils.ExternalObjectEncoding);
 			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(ba));
 			return new ConfigLine<Object>(name, ois.readObject(), editable, true);
@@ -296,6 +296,90 @@ public class ConfigLineUtils {
 		// Houston, we have a problem...
 		System.err.println("Error reading in object with name " + name);
 		return new ConfigLine<Object>(name, null);
-		
 	}
+	
+	public static ConfigLine<String> makeDynamicFilePointer(String name, Object value, boolean editable, 
+			String filename, File configfile_location) {
+		
+		// Find the file
+		File temp = new File(configfile_location.getAbsolutePath());
+		File location = new File(temp.getParent() + File.separator + filename);
+		
+		String serialized_obj = "";
+		try {
+			// Write the object to a byte array stream, which can then be converted into a String
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(bos);
+			oos.writeObject(value);
+			oos.flush();
+			bos.flush();
+			oos.close();
+			bos.close();
+			serialized_obj = bos.toString();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			location.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			Files.write(location.toPath(), serialized_obj.getBytes(ConfigLineUtils.ExternalObjectEncoding));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		/*try {
+			// Create the file if it does not exist
+			location.createNewFile();
+			
+			// Write the file to the output location
+			FileOutputStream fos = new FileOutputStream(location);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(value);
+			oos.flush();
+			oos.close();
+			fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}*/
+		
+		// Return a ConfigLine with a file header that points to the written file, hopefully
+		return new ConfigLine<String>(name, filename, editable, StringUtils.FilePointerHeader + 
+				ConfigLineUtils.DynamicLocation + filename);
+	}
+	
+	public static ConfigLine<String> makeDynamicFilePointer(String name, Object value, boolean editable, 
+			String filename, ConfigFile configfile) {
+		return ConfigLineUtils.makeDynamicFilePointer(name, value, editable, filename, configfile.getFile());
+	}
+	
+	public static ConfigLine<String> makeStaticFilePointer(String name, Object value, boolean editable, File location) {
+		
+		
+		try {
+			// Create the file if it does not exist
+			location.createNewFile();
+			
+			// Write the file to the output location
+			FileOutputStream fos = new FileOutputStream(location);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(value);
+			oos.flush();
+			oos.close();
+			fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return new ConfigLine<String>(name, location.getAbsolutePath(), editable, StringUtils.FilePointerHeader + 
+				ConfigLineUtils.StaticLocation + location.getAbsolutePath());
+	}
+	
+	
+	
 }
