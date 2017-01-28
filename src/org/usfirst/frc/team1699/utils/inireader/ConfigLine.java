@@ -129,7 +129,15 @@ public class ConfigLine<Type> implements Serializable {
 		
 		// If this ConfigLine is in Object mode
 		if (this.object_mode) {
-			return ConfigLineUtils.makeSerializedObject(this.name, this.value, this.editable).generateCode();
+			// Make a String of the byte array
+			String output = Parser.ObjectHeader + "{";
+			for (byte b : ConfigLineUtils.makeByteArray(this.value)) {
+				output += b + ",";
+			}
+			output = output.substring(0, output.length() - 1);
+			output += "}";
+			
+			return if_editable + this.name + " = " + output + "\n";
 		}
 		
 		// If something is a List or ArrayList, then it needs to be changed to use '{' and '}' over '[' and ']'
@@ -140,20 +148,6 @@ public class ConfigLine<Type> implements Serializable {
 			list = list.replace('[', '{');
 			list = list.replace(']', '}');
 			return if_editable + this.name + " = " + list + "\n"; 
-		} 
-		
-		// If something is a byte[], then it needs to be treated like a serialized object
-		if (this.value instanceof byte[]) {
-			String output = Parser.ObjectHeader + "{";
-			
-			for(byte b : (byte[]) this.value) {
-				output += b + ",";
-			}
-			
-			output = output.substring(0, output.length() - 1);
-			output += "}";
-			
-			return if_editable + this.name + " = " + output + "\n";
 		}
 		
 		// If this ConfigLine is just a value, then return only the value

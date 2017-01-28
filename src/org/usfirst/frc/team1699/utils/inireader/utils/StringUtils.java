@@ -120,21 +120,30 @@ public class StringUtils {
 		return (test.length() > 1) && (test.trim().substring(0, 2).toLowerCase().equals(Parser.ObjectHeader));
 	}
 	
+	/**
+	 * Converts a String to a byte array
+	 * 
+	 * @param line the String to convert
+	 * @return a byte array made from the given String
+	 */
 	public static byte[] toByteArray(String line) {
+		// Temporary holding because I don't like arrays
 		List<Byte> temp = new ArrayList<>();
 		
+		// Clean up the input line
 		String w_line = line.replace(Parser.ObjectHeader, " ");
 		w_line = w_line.replace('{', ' ');
 		w_line = w_line.replace('}', ' ');
 		w_line = w_line.trim();
 		
+		// Split and process every line into a byte
 		for(String s : w_line.split(",")) {
 			String s_temp = s.trim();
 			temp.add(Byte.valueOf(s_temp));
 		}
 		
+		// Take the temporary List and convert it to an array
 		byte[] output = new byte[temp.size()];
-		
 		for(int i = 0; i < temp.size(); i += 1) {
 			output[i] = temp.get(i);
 		}

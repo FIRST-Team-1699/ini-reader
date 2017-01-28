@@ -178,15 +178,15 @@ public class ConfigLineUtils {
 	public static ConfigLine<byte[]> makeSerializedObject(String name, Object obj, boolean editable) {
 		// Try to write the object to a byte array stream, which can then be converted into a String
 		try (
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(bos);
-		){
-			oos.writeObject(obj);
-			oos.flush();
-			return new ConfigLine<byte[]>(name, bos.toByteArray(), editable);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				ObjectOutputStream oos = new ObjectOutputStream(bos);
+			){
+				oos.writeObject(obj);
+				oos.flush();
+				return new ConfigLine<byte[]>(name, bos.toByteArray(), editable);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		
 		// Error out
 		System.err.println("Error making object with name " + name);
@@ -204,18 +204,42 @@ public class ConfigLineUtils {
 	public static ConfigLine<Object> readSerializedObject(String name, byte[] ser_obj, boolean editable) {
 		// Try to read an object out of the byte array
 		try (
-			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(ser_obj));
-		){
-			return new ConfigLine<Object>(name, ois.readObject(), editable, true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+				ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(ser_obj));
+			){
+				return new ConfigLine<Object>(name, ois.readObject(), editable, true);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
 		
 		// Error out
 		System.err.println("Error reading in object with name " + name);
 		return new ConfigLine<Object>(name, null, editable);
-	}	
+	}
+	
+	/**
+	 * Make a byte array from the given object (serialize it)
+	 * 
+	 * @param obj the object to serialize
+	 * @return a byte array of the serialized object
+	 */
+	public static byte[] makeByteArray(Object obj) {
+		// Try to make the byte array
+		try (
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				ObjectOutputStream oos = new ObjectOutputStream(bos);
+			){
+				oos.writeObject(obj);
+				oos.flush();
+				return bos.toByteArray();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		
+		// Error out
+		System.err.println("Error making byte array!");
+		return null;
+	}
 	
 }
