@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.usfirst.frc.team1699.utils.inireader.parser.Parser;
 import org.usfirst.frc.team1699.utils.inireader.utils.ConfigLineUtils;
 
 /**
@@ -23,12 +24,8 @@ public class ConfigLine<Type> implements Serializable {
 	private String name;
 	private Type value;
 	
-	private String line_declaration = null;
-	
 	public final boolean editable;
 	public final boolean object_mode;
-	@Deprecated
-	public final boolean file_mode;
 
 	/**
 	 * Creates a ConfigLine with the specified contents
@@ -40,7 +37,6 @@ public class ConfigLine<Type> implements Serializable {
 		this.name = name;
 		this.value = value;
 		this.editable = false;
-		this.file_mode = false;
 		this.object_mode = false;
 	}
 	
@@ -54,7 +50,6 @@ public class ConfigLine<Type> implements Serializable {
 	public ConfigLine(String name, Type value, boolean editable) {
 		this.name = name;
 		this.value = value;
-		this.file_mode = false;
 		this.editable = editable;
 		this.object_mode = false;
 	}
@@ -71,25 +66,7 @@ public class ConfigLine<Type> implements Serializable {
 		this.name = name;
 		this.value = value;
 		this.editable = editable;
-		this.file_mode = false;
 		this.object_mode = object_mode;
-	}
-	
-	/**
-	 * Creates a ConfigLine with the specified contents and makes it editable if true.
-	 * 
-	 * @param name the name of the value
-	 * @param value any value
-	 * @param editable if the ConfigLine should be editable
-	 * @param line the line declaration that made this ConfigLine, and puts this ConfigLine in file mode
-	 */
-	public ConfigLine(String name, Type value, boolean editable, String line) {
-		this.name = name;
-		this.value = value;
-		this.editable = editable;
-		this.object_mode = false;
-		this.file_mode = true;
-		this.line_declaration = line;
 	}
 	
 	/**
@@ -101,9 +78,7 @@ public class ConfigLine<Type> implements Serializable {
 		this.name = line.getName();
 		this.value = (Type) line.getRawValue();
 		this.editable = line.editable;
-		this.file_mode = line.file_mode;
 		this.object_mode = line.object_mode;
-		this.line_declaration = line.getLineDeclaration();
 	}
 
 	/**
@@ -122,16 +97,6 @@ public class ConfigLine<Type> implements Serializable {
 	 */
 	public Type getRawValue() {
 		return value;
-	}
-	
-	/**
-	 * Gets the line declaration if in file mode
-	 * 
-	 * @return the line declaration if in file mode
-	 */
-	@Deprecated
-	public String getLineDeclaration() {
-		return this.line_declaration;
 	}
 	
 	/**
@@ -167,11 +132,6 @@ public class ConfigLine<Type> implements Serializable {
 			return ConfigLineUtils.makeSerializedObject(this.name, this.value, this.editable).generateCode();
 		}
 		
-		// If this ConfigLine is in File mode
-		if (this.file_mode) {
-			return if_editable + this.name + " = " + this.line_declaration + "\n";
-		}
-		
 		// If something is a List or ArrayList, then it needs to be changed to use '{' and '}' over '[' and ']'
 		if (this.value instanceof List || this.value instanceof ArrayList) {
 			String list = this.value.toString();
@@ -184,7 +144,7 @@ public class ConfigLine<Type> implements Serializable {
 		
 		// If something is a byte[], then it needs to be treated like a serialized object
 		if (this.value instanceof byte[]) {
-			String output = "o*{";
+			String output = Parser.ObjectHeader + "{";
 			
 			for(byte b : (byte[]) this.value) {
 				output += b + ",";

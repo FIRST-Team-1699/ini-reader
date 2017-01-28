@@ -86,7 +86,7 @@ public class ConfigFile {
 		reader.close();
 		
 		// Now, it's time to parse the contents of the file
-		Parser parser = new Parser(contents, this.file);
+		Parser parser = new Parser(contents);
 		parser.parse();
 		this.sections = parser.getSections();
 	}

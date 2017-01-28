@@ -7,7 +7,6 @@
  */
 package org.usfirst.frc.team1699.utils.inireader.parser;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,17 +36,20 @@ public class Parser {
 	
 	private String contents;
 	private List<RawSection> r_sections;
-	private File config_location = null;
+	
+	/**
+	 * The text used to notify the parser that the following text is a serialized object
+	 */
+	public static String ObjectHeader = "o*";
 	
 	/**
 	 * Make a ConfigFile Parser
 	 * 
 	 * @param contents the contents of a file
 	 */
-	public Parser(String contents, File config_location) {
+	public Parser(String contents) {
 		this.contents = contents;
 		this.r_sections = new ArrayList<>();
-		this.config_location = config_location;
 	}
 	
 	/**
@@ -111,7 +113,7 @@ public class Parser {
 					// If not, this must be an editable line
 					} else {
 						// Add the new line with the header removed
-						stack_lines.add(new RawLine(line.substring(1), true, this.config_location));
+						stack_lines.add(new RawLine(line.substring(1), true));
 					}
 					break;
 					
@@ -135,12 +137,12 @@ public class Parser {
 					
 				// Default case
 				default:
-					stack_lines.add(new RawLine(line, false, this.config_location));
+					stack_lines.add(new RawLine(line, false));
 					break;				
 				}
 			// Just a case for normal lines :/
 			} else {
-				stack_lines.add(new RawLine(line, this.config_location));
+				stack_lines.add(new RawLine(line, false));
 			}
 		}
 		// Add the lines at the end of a file that don't have a section below them

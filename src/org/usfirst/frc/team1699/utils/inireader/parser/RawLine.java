@@ -7,8 +7,6 @@
  */
 package org.usfirst.frc.team1699.utils.inireader.parser;
 
-import java.io.File;
-
 import org.usfirst.frc.team1699.utils.inireader.ConfigLine;
 import org.usfirst.frc.team1699.utils.inireader.utils.ConfigLineUtils;
 import org.usfirst.frc.team1699.utils.inireader.utils.StringUtils;
@@ -19,7 +17,6 @@ import org.usfirst.frc.team1699.utils.inireader.utils.StringUtils;
 public class RawLine {
 	
 	private String line;
-	private File config_location;
 	private boolean editable = false;
 	
 	/**
@@ -28,13 +25,12 @@ public class RawLine {
 	 * @param line a line from a configuration file before processing
 	 * @param editable if the ConfigLine should be editable
 	 */
-	public RawLine(String line, File config_location) {
+	public RawLine(String line) {
 		this.line = line;
 		if (!line.endsWith("\n")) {
 			line += "\n";
 		}
 		this.editable = false;
-		this.config_location = config_location;
 	}
 	
 	/**
@@ -43,13 +39,12 @@ public class RawLine {
 	 * @param editable if the ConfigLine should be editable
 	 * @param config_location the file from the ConfigFile (used for dynamic file locations)
 	 */
-	public RawLine(String line, boolean editable, File config_location) {
+	public RawLine(String line, boolean editable) {
 		this.line = line;
 		if (!line.endsWith("\n")) {
 			line += "\n";
 		}
 		this.editable = editable;
-		this.config_location = config_location;
 	}
 	
 	/**
@@ -89,9 +84,6 @@ public class RawLine {
 		if (StringUtils.isSerializedObejct(section2)) {
 			byte[] serial_object_bytes = StringUtils.toByteArray(section2);
 			return ConfigLineUtils.readSerializedObject(section1, serial_object_bytes, this.editable);
-		// Check for file mode
-		} else if (StringUtils.isFilePointer(section2)) {
-			return ConfigLineUtils.readFilePointer(section1, section2, this.editable, this.config_location);
 		// Check if the value is a List
 		} else if (StringUtils.containsList(section2)) {			
 			// Clean the sting and remove the brackets
