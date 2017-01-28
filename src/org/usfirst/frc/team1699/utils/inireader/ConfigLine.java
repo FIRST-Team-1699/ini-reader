@@ -27,6 +27,7 @@ public class ConfigLine<Type> implements Serializable {
 	
 	public final boolean editable;
 	public final boolean object_mode;
+	@Deprecated
 	public final boolean file_mode;
 
 	/**
@@ -64,7 +65,7 @@ public class ConfigLine<Type> implements Serializable {
 	 * @param name the name of the value, what comes before the "="
 	 * @param value any value
 	 * @param editable if the ConfigLine should be editable
-	 * @param object_mode if the ConfigLine is a Serialized Object
+	 * @param object_mode if the ConfigLine is an Object that needs to be serialized on code generation
 	 */
 	public ConfigLine(String name, Type value, boolean editable, boolean object_mode) {
 		this.name = name;
@@ -128,6 +129,7 @@ public class ConfigLine<Type> implements Serializable {
 	 * 
 	 * @return the line declaration if in file mode
 	 */
+	@Deprecated
 	public String getLineDeclaration() {
 		return this.line_declaration;
 	}
@@ -162,7 +164,7 @@ public class ConfigLine<Type> implements Serializable {
 		
 		// If this ConfigLine is in Object mode
 		if (this.object_mode) {
-			return if_editable + ConfigLineUtils.makeSerializedObject(this.name, this.value, this.editable).generateCode();
+			return ConfigLineUtils.makeSerializedObject(this.name, this.value, this.editable).generateCode();
 		}
 		
 		// If this ConfigLine is in File mode
@@ -179,6 +181,20 @@ public class ConfigLine<Type> implements Serializable {
 			list = list.replace(']', '}');
 			return if_editable + this.name + " = " + list + "\n"; 
 		} 
+		
+		// If something is a byte[], then it needs to be treated like a serialized object
+		if (this.value instanceof byte[]) {
+			String output = "o*{";
+			
+			for(byte b : (byte[]) this.value) {
+				output += b + ",";
+			}
+			
+			output = output.substring(0, output.length() - 1);
+			output += "}";
+			
+			return if_editable + this.name + " = " + output + "\n";
+		}
 		
 		// If this ConfigLine is just a value, then return only the value
 		if (this.name == null || this.name.trim().equals("")) {

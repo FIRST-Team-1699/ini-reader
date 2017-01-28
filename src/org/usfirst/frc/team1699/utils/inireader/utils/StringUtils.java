@@ -7,6 +7,9 @@
  */
 package org.usfirst.frc.team1699.utils.inireader.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A class filled with static methods that are used for processing String
  */
@@ -135,5 +138,26 @@ public class StringUtils {
 		return (test.length() > 1) && (test.trim().substring(0, 2).toLowerCase().equals("f*"));
 	}
 	
+	public static byte[] toByteArray(String line) {
+		List<Byte> temp = new ArrayList<>();
+		
+		String w_line = line.replace("o*", " ");
+		w_line = w_line.replace('{', ' ');
+		w_line = w_line.replace('}', ' ');
+		w_line = w_line.trim();
+		
+		for(String s : w_line.split(",")) {
+			String s_temp = s.trim();
+			temp.add(Byte.valueOf(s_temp));
+		}
+		
+		byte[] output = new byte[temp.size()];
+		
+		for(int i = 0; i < temp.size(); i += 1) {
+			output[i] = temp.get(i);
+		}
+		
+		return output;
+	}
 	
 }

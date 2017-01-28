@@ -206,19 +206,22 @@ public class ConfigLineUtils {
 	 * @param editable if the ConfigLine should be editable
 	 * @return a ConfigLine that contains a serialized object
 	 */
-	public static ConfigLine<String> makeSerializedObject(String name, Object obj, boolean editable) {
-		String serialized_obj = "";
+	public static ConfigLine<byte[]> makeSerializedObject(String name, Object obj, boolean editable) {
+		
+		byte[] output = null;
+		
 		try {
 			// Write the object to a byte array stream, which can then be converted into a String
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(bos);
 			oos.writeObject(obj);
 			oos.flush();
-			serialized_obj = bos.toString(ConfigLineUtils.InLineObjectEncoding);
+			oos.close();
+			output = bos.toByteArray();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return new ConfigLine<String>(name, "o*" + serialized_obj.replace("\n", ConfigLineUtils.EncodedNewline), editable);
+		return new ConfigLine<byte[]>(name, output, editable);
 	}
 	
 	/**
@@ -229,15 +232,15 @@ public class ConfigLineUtils {
 	 * @param editable if the ConfigLine should be editable
 	 * @return a ConfigLine made from a read-in serialized object
 	 */
-	public static ConfigLine<Object> readSerializedObject(String name, String text, boolean editable) {
+	public static ConfigLine<Object> readSerializedObject(String name, byte[] ba, boolean editable) {
 		// Removes the "o*" header (and removes custom encoding)
-		String ser_object = text.substring(2).replace(ConfigLineUtils.EncodedNewline, "\n");
+		//String ser_object = text.substring(2).replace(ConfigLineUtils.EncodedNewline, "\n");
 		
-		try {
+		try 
 			// Reads in the object as an object, then returns it as a ConfigLine<Object>
 			// The Java compiler will automatically figure out the type, so no casting is required.
-			byte[] ba = ser_object.getBytes(ConfigLineUtils.InLineObjectEncoding);
-			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(ba));
+			//byte[] ba = ser_object.getBytes(ConfigLineUtils.InLineObjectEncoding);
+			(ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(ba));){
 			return new ConfigLine<Object>(name, ois.readObject(), editable, true);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -259,7 +262,8 @@ public class ConfigLineUtils {
 	 * @param config_location the location of the ConfigFile, used for dynamic locations
 	 * @return a ConfigLine made from the read-in serialized object
 	 */
-	public static ConfigLine<Object> readFileHeader(String name, String pointer, boolean editable, File config_location) {
+	@Deprecated
+	public static ConfigLine<Object> readFilePointer(String name, String pointer, boolean editable, File config_location) {
 		// Removes the file header
 		pointer = pointer.replace(StringUtils.FilePointerHeader, " ");
 		pointer = pointer.trim();
@@ -282,7 +286,9 @@ public class ConfigLineUtils {
 		// Read the file from the disk, specify the encoding, then read the object from that data
 		try {
 			String stuff = new String(Files.readAllBytes(location.toPath()));
-			byte[] ba = stuff.getBytes(ConfigLineUtils.ExternalObjectEncoding);
+			//byte[] ba = stuff.getBytes(ConfigLineUtils.ExternalObjectEncoding);
+
+			byte[] ba = stuff.getBytes();
 			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(ba));
 			return new ConfigLine<Object>(name, ois.readObject(), editable, true);
 		} catch (UnsupportedEncodingException e) {
@@ -298,6 +304,7 @@ public class ConfigLineUtils {
 		return new ConfigLine<Object>(name, null);
 	}
 	
+	@Deprecated
 	public static ConfigLine<String> makeDynamicFilePointer(String name, Object value, boolean editable, 
 			String filename, File configfile_location) {
 		
@@ -313,9 +320,10 @@ public class ConfigLineUtils {
 			oos.writeObject(value);
 			oos.flush();
 			bos.flush();
+			serialized_obj = bos.toString();
 			oos.close();
 			bos.close();
-			serialized_obj = bos.toString();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -327,7 +335,8 @@ public class ConfigLineUtils {
 		}
 		
 		try {
-			Files.write(location.toPath(), serialized_obj.getBytes(ConfigLineUtils.ExternalObjectEncoding));
+			//Files.write(location.toPath(), serialized_obj.getBytes(ConfigLineUtils.ExternalObjectEncoding));
+			Files.write(location.toPath(), serialized_obj.getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -353,11 +362,13 @@ public class ConfigLineUtils {
 				ConfigLineUtils.DynamicLocation + filename);
 	}
 	
+	@Deprecated
 	public static ConfigLine<String> makeDynamicFilePointer(String name, Object value, boolean editable, 
 			String filename, ConfigFile configfile) {
 		return ConfigLineUtils.makeDynamicFilePointer(name, value, editable, filename, configfile.getFile());
 	}
 	
+	@Deprecated
 	public static ConfigLine<String> makeStaticFilePointer(String name, Object value, boolean editable, File location) {
 		
 		
